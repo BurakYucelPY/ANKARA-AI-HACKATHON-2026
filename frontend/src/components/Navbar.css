@@ -1,12 +1,12 @@
 /* ===================================
-   SIDEBAR NAVIGASYON STİLLERİ
+   SIDEBAR NAVIGASYON - DOĞA TEMALI
    =================================== */
 
 /* Sidebar Değişkenleri */
 :root {
-    --sidebar-width: 260px;
+    --sidebar-width: 280px;
     --sidebar-collapsed-width: 70px;
-    --mobile-header-height: 60px;
+    --mobile-header-height: 64px;
 }
 
 /* Sidebar */
@@ -16,13 +16,28 @@
     left: 0;
     width: var(--sidebar-width);
     height: 100vh;
-    background: rgba(17, 24, 39, 0.98);
+    background: linear-gradient(180deg,
+            rgba(15, 23, 42, 0.98) 0%,
+            rgba(30, 41, 59, 0.95) 50%,
+            rgba(15, 23, 42, 0.98) 100%);
     backdrop-filter: blur(20px);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(34, 197, 94, 0.15);
     display: flex;
     flex-direction: column;
     z-index: 1000;
     transition: transform var(--transition-normal);
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Sidebar üst kısım dekoratif çizgi */
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-primary);
 }
 
 .sidebar-header {
@@ -30,21 +45,67 @@
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-6);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Header arka plan efekti */
+.sidebar-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(34, 197, 94, 0.08) 0%, transparent 70%);
+    animation: pulse-slow 4s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
 }
 
 .navbar-logo {
-    font-size: 2rem;
-    animation: pulse 2s infinite;
+    font-size: 2.5rem;
+    filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
+    animation: float 3s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
 }
 
 .navbar-title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
     background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    position: relative;
+    z-index: 1;
+    letter-spacing: -0.5px;
 }
 
 /* Sidebar Menü */
@@ -63,47 +124,100 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    padding: var(--space-4);
+    padding: var(--space-4) var(--space-4);
     color: var(--gray-400);
     text-decoration: none;
-    border-radius: var(--radius-lg);
-    transition: all var(--transition-fast);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-normal);
     font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover efekti */
+.sidebar-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(34, 197, 94, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
 }
 
 .sidebar-link:hover {
     color: white;
-    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(4px);
 }
 
+.sidebar-link:hover::before {
+    opacity: 1;
+}
+
+/* Active link stili */
 .sidebar-link-active {
     color: white;
     background: var(--gradient-primary);
+    box-shadow: var(--glow-green);
 }
 
+.sidebar-link-active::before {
+    display: none;
+}
+
+.sidebar-link-active:hover {
+    transform: translateX(0);
+}
+
+/* İkon stili */
 .sidebar-icon {
-    font-size: 1.5rem;
-    width: 32px;
-    text-align: center;
+    font-size: 1.4rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-normal);
+}
+
+.sidebar-link:hover .sidebar-icon {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.sidebar-link-active .sidebar-icon {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .sidebar-label {
     font-size: 0.95rem;
+    position: relative;
+    z-index: 1;
 }
 
 /* Sidebar Footer */
 .sidebar-footer {
     padding: var(--space-4);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     text-align: center;
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-footer p {
     font-size: 0.75rem;
     color: var(--gray-500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
 }
 
-/* Mobil Header (varsayılan olarak gizli) */
+.sidebar-footer p::before {
+    content: '🌱';
+}
+
+/* Mobil Header */
 .mobile-header {
     display: none;
     position: fixed;
@@ -111,10 +225,24 @@
     left: 0;
     right: 0;
     height: var(--mobile-header-height);
-    background: rgba(17, 24, 39, 0.98);
+    background: linear-gradient(90deg,
+            rgba(15, 23, 42, 0.98) 0%,
+            rgba(30, 41, 59, 0.95) 100%);
     backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(34, 197, 94, 0.15);
     z-index: 1001;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Header üst çizgi */
+.mobile-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-primary);
 }
 
 .mobile-header-content {
@@ -132,17 +260,18 @@
 }
 
 .mobile-brand .navbar-logo {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
 }
 
 .mobile-brand .navbar-title {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
 }
 
 /* Hamburger Butonu */
 .hamburger-btn {
-    background: none;
-    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
     padding: var(--space-2);
     cursor: pointer;
     display: flex;
@@ -150,14 +279,20 @@
     justify-content: center;
     min-width: 44px;
     min-height: 44px;
+    transition: all var(--transition-normal);
+}
+
+.hamburger-btn:hover {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.3);
 }
 
 .hamburger-icon {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 24px;
-    height: 18px;
+    width: 22px;
+    height: 16px;
     position: relative;
 }
 
@@ -165,21 +300,22 @@
     display: block;
     height: 2px;
     width: 100%;
-    background: white;
+    background: linear-gradient(90deg, var(--plant-green) 0%, var(--water-blue) 100%);
     border-radius: 2px;
-    transition: all var(--transition-fast);
+    transition: all var(--transition-normal);
 }
 
 .hamburger-icon.open span:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
+    transform: translateY(7px) rotate(45deg);
 }
 
 .hamburger-icon.open span:nth-child(2) {
     opacity: 0;
+    transform: scaleX(0);
 }
 
 .hamburger-icon.open span:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
+    transform: translateY(-7px) rotate(-45deg);
 }
 
 /* Overlay */
@@ -189,7 +325,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
     z-index: 999;
     opacity: 0;
@@ -206,7 +342,6 @@
    RESPONSIVE
    =================================== */
 
-/* Tablet ve Mobil (900px ve altı) */
 @media (max-width: 900px) {
     .sidebar {
         transform: translateX(-100%);
@@ -221,7 +356,6 @@
     }
 }
 
-/* Masaüstü (900px üstü) */
 @media (min-width: 901px) {
     .sidebar-overlay {
         display: none;
@@ -230,13 +364,8 @@
     .mobile-header {
         display: none;
     }
-
-    .sidebar-footer {
-        display: block;
-    }
 }
 
-/* Küçük mobil */
 @media (max-width: 480px) {
     .sidebar {
         width: 85%;
@@ -245,5 +374,15 @@
 
     .mobile-brand .navbar-title {
         font-size: 1.1rem;
+    }
+
+    .sidebar-link {
+        padding: var(--space-3);
+    }
+
+    .sidebar-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1.2rem;
     }
 }

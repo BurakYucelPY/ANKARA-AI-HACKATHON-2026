@@ -1,9 +1,147 @@
+/* ===================================
+   DASHBOARD - YENİ TASARIM
+   =================================== */
+
 .dashboard {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
-    animation: fadeIn 0.5s ease;
+    animation: dashboardFadeIn 0.6s ease forwards;
 }
 
+@keyframes dashboardFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ===================================
+   TOPLAM KAR - HERO BÖLÜMÜ
+   =================================== */
+
+.profit-hero {
+    background: linear-gradient(135deg,
+            rgba(34, 197, 94, 0.15) 0%,
+            rgba(14, 165, 233, 0.1) 50%,
+            rgba(34, 197, 94, 0.15) 100%);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-10) var(--space-8);
+    margin-bottom: var(--space-8);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.profit-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+.profit-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, rgba(34, 197, 94, 0.2) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.profit-hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.profit-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    color: var(--gray-300);
+    font-size: 1rem;
+    margin-bottom: var(--space-3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.profit-icon {
+    font-size: 1.5rem;
+}
+
+.profit-amount {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.profit-amount .currency {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--plant-green);
+}
+
+.profit-amount .amount {
+    font-size: 5rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(34, 197, 94, 0.3));
+    line-height: 1;
+}
+
+.profit-subtitle {
+    color: var(--gray-400);
+    font-size: 0.9rem;
+}
+
+/* Mini Stats */
+.dashboard-mini-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-8);
+    margin-bottom: var(--space-6);
+    padding: var(--space-4);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-lg);
+}
+
+.mini-stat {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.mini-stat-icon {
+    font-size: 1.5rem;
+}
+
+.mini-stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+}
+
+.mini-stat-label {
+    color: var(--gray-400);
+    font-size: 0.85rem;
+}
+
+/* Header */
 .dashboard-header {
     display: flex;
     justify-content: space-between;
@@ -12,7 +150,7 @@
 }
 
 .dashboard-welcome h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     margin-bottom: var(--space-2);
     background: var(--gradient-primary);
     -webkit-background-clip: text;
@@ -22,94 +160,328 @@
 
 .dashboard-welcome p {
     color: var(--gray-400);
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .dashboard-date {
     color: var(--gray-400);
     font-size: 0.9rem;
-    text-align: right;
+    padding: var(--space-3) var(--space-4);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* İstatistikler */
-.dashboard-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-6);
-    margin-bottom: var(--space-8);
-}
+/* ===================================
+   ANA İÇERİK GRID
+   =================================== */
 
-.stat-card {
-    text-align: center;
-    padding: var(--space-6);
-}
-
-.stat-icon {
-    font-size: 2.5rem;
-    display: block;
-    margin-bottom: var(--space-3);
-}
-
-.stat-value {
-    font-size: 2.5rem;
-    font-weight: 700;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: var(--space-2);
-}
-
-.stat-label {
-    color: var(--gray-400);
-    font-size: 0.9rem;
-}
-
-.stat-card-0 {
-    animation-delay: 0.1s;
-}
-
-.stat-card-1 {
-    animation-delay: 0.2s;
-}
-
-.stat-card-2 {
-    animation-delay: 0.3s;
-}
-
-.stat-card-3 {
-    animation-delay: 0.4s;
-}
-
-/* Dashboard Grid */
-.dashboard-grid {
+.dashboard-main-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-6);
     margin-bottom: var(--space-6);
 }
 
-/* Aktiviteler */
+/* Sulama Durum Kartları */
+.irrigation-status-card,
+.next-irrigation-card {
+    padding: var(--space-6);
+}
+
+.irrigation-status-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.irrigation-status-header h3 {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.irrigation-icon {
+    font-size: 1.5rem;
+}
+
+/* Aktif Sulama */
+.irrigation-status-card.active {
+    border-color: rgba(34, 197, 94, 0.3);
+    background: linear-gradient(145deg, rgba(34, 197, 94, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
+}
+
+.irrigation-status-card.inactive {
+    border-color: rgba(100, 116, 139, 0.2);
+}
+
+.irrigation-active {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.irrigation-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.field-name {
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.irrigation-badge {
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-2xl);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.active-badge {
+    background: rgba(34, 197, 94, 0.2);
+    color: var(--plant-green-light);
+    animation: pulse 2s infinite;
+}
+
+.irrigation-progress {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--gray-400);
+}
+
+.irrigation-progress-fill {
+    background: var(--gradient-primary) !important;
+}
+
+.water-animation {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+}
+
+.water-drop {
+    font-size: 1.5rem;
+    animation: dropFall 1s infinite;
+}
+
+.water-drop:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.water-drop:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes dropFall {
+
+    0%,
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translateY(8px);
+        opacity: 0.5;
+    }
+}
+
+/* Aktif Sulama Yok */
+.irrigation-inactive {
+    text-align: center;
+    padding: var(--space-4) 0;
+}
+
+.no-irrigation-text {
+    color: var(--gray-400);
+    font-size: 1rem;
+    margin-bottom: var(--space-3);
+}
+
+.inactive-icon {
+    font-size: 3rem;
+    opacity: 0.5;
+}
+
+/* Sonraki Sulama */
+.next-irrigation-card {
+    border-color: rgba(14, 165, 233, 0.2);
+}
+
+.next-irrigation-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.next-irrigation-time {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.next-date {
+    color: var(--gray-400);
+    font-size: 0.9rem;
+}
+
+.next-time {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: var(--gradient-ocean);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.next-irrigation-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: right;
+}
+
+.next-field {
+    color: white;
+    font-weight: 500;
+}
+
+.next-duration {
+    color: var(--gray-400);
+    font-size: 0.9rem;
+}
+
+/* ===================================
+   İSTATİSTİKLER
+   =================================== */
+
+.dashboard-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.stat-card-new {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5);
+}
+
+.stat-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.stat-icon-wrapper.water {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(14, 165, 233, 0.1) 100%);
+}
+
+.stat-icon-wrapper.profit {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%);
+}
+
+.stat-icon-wrapper.days {
+    background: linear-gradient(135deg, rgba(161, 98, 7, 0.2) 0%, rgba(161, 98, 7, 0.1) 100%);
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.stat-value-new {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.stat-label-new {
+    font-size: 0.85rem;
+    color: var(--gray-400);
+}
+
+/* Sistem Bilgi */
+.system-start-info {
+    text-align: center;
+    color: var(--gray-500);
+    font-size: 0.85rem;
+    margin-bottom: var(--space-6);
+    padding: var(--space-3);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-lg);
+}
+
+/* ===================================
+   SON AKTİVİTELER
+   =================================== */
+
+.activities-card {
+    padding: var(--space-6);
+}
+
+.card-header-custom {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.card-header-custom h3 {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.header-icon {
+    font-size: 1.25rem;
+}
+
 .activity-list {
     list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
 }
 
 .activity-item {
     display: flex;
     align-items: flex-start;
     gap: var(--space-3);
-    padding: var(--space-3) 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.02);
+    transition: all var(--transition-normal);
 }
 
-.activity-item:last-child {
-    border-bottom: none;
+.activity-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(4px);
 }
 
 .activity-indicator {
     width: 8px;
     height: 8px;
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     margin-top: 6px;
     flex-shrink: 0;
 }
@@ -134,6 +506,10 @@
     box-shadow: 0 0 8px var(--danger);
 }
 
+.activity-content {
+    flex: 1;
+}
+
 .activity-message {
     color: var(--gray-200);
     font-size: 0.9rem;
@@ -145,66 +521,17 @@
     font-size: 0.75rem;
 }
 
-/* Hızlı Erişim */
-.quick-actions {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-}
+/* ===================================
+   RESPONSIVE
+   =================================== */
 
-.quick-action-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-4);
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--radius-lg);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
+@media (max-width: 900px) {
+    .dashboard-main-grid {
+        grid-template-columns: 1fr;
+    }
 
-.quick-action-item:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateX(8px);
-}
-
-.quick-action-icon {
-    font-size: 1.5rem;
-}
-
-.quick-action-text h4 {
-    color: white;
-    margin-bottom: var(--space-1);
-}
-
-.quick-action-text p {
-    font-size: 0.8rem;
-    color: var(--gray-400);
-}
-
-/* Bilgi Kartı */
-.info-card {
-    margin-top: var(--space-6);
-}
-
-.info-content {
-    display: flex;
-    align-items: center;
-    gap: var(--space-6);
-}
-
-.info-icon {
-    font-size: 3rem;
-}
-
-.info-text h3 {
-    margin-bottom: var(--space-2);
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-    .dashboard-stats {
-        grid-template-columns: repeat(2, 1fr);
+    .dashboard-stats-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -215,23 +542,42 @@
     }
 
     .dashboard-date {
-        text-align: left;
+        align-self: flex-start;
     }
 
     .dashboard-welcome h1 {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
     }
 
-    .dashboard-stats {
-        grid-template-columns: 1fr;
+    .next-irrigation-content {
+        flex-direction: column;
+        gap: var(--space-4);
+        text-align: center;
     }
 
-    .dashboard-grid {
-        grid-template-columns: 1fr;
+    .next-irrigation-details {
+        text-align: center;
     }
 
-    .info-content {
+    .irrigation-field {
+        flex-direction: column;
+        gap: var(--space-2);
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .stat-card-new {
         flex-direction: column;
         text-align: center;
+    }
+
+    .stat-icon-wrapper {
+        width: 48px;
+        height: 48px;
+    }
+
+    .stat-info {
+        align-items: center;
     }
 }

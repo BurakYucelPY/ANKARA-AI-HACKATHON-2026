@@ -1,23 +1,64 @@
+/* ===================================
+   CARD BİLEŞENİ - MODERN GLASSMORPHISM
+   =================================== */
+
 .card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(145deg,
+            rgba(30, 41, 59, 0.7) 0%,
+            rgba(15, 23, 42, 0.8) 100%);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-xl);
     padding: var(--space-6);
     transition: all var(--transition-normal);
-    animation: fadeIn 0.5s ease forwards;
+    animation: cardFadeIn 0.5s ease forwards;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Üst dekoratif çizgi */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    opacity: 0.5;
+    transition: opacity var(--transition-normal);
 }
 
 .card:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: linear-gradient(145deg,
+            rgba(30, 41, 59, 0.8) 0%,
+            rgba(15, 23, 42, 0.9) 100%);
+    border-color: rgba(34, 197, 94, 0.2);
     transform: translateY(-4px);
-    box-shadow: var(--shadow-xl);
+    box-shadow: var(--shadow-xl), var(--glow-mixed);
+}
+
+.card:hover::before {
+    opacity: 1;
 }
 
 .card-clickable {
     cursor: pointer;
 }
 
+/* Card Header */
 .card-header {
     display: flex;
     align-items: flex-start;
@@ -28,6 +69,7 @@
 .card-icon {
     font-size: 2.5rem;
     line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .card-header-text {
@@ -50,35 +92,90 @@
     color: var(--gray-300);
 }
 
-/* Variant: Stats */
+/* ===================================
+   CARD VARIANTS
+   =================================== */
+
+/* Stats Card */
 .card-stats {
     text-align: center;
     padding: var(--space-8);
+    position: relative;
+}
+
+.card-stats::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 40%;
+    background: radial-gradient(ellipse at bottom, rgba(34, 197, 94, 0.1) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .card-stats .card-icon {
-    font-size: 3rem;
+    font-size: 3.5rem;
     margin-bottom: var(--space-4);
     display: block;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
 }
 
 .card-stats .card-title {
-    font-size: 2.5rem;
+    font-size: 3rem;
+    font-weight: 700;
     background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.3));
 }
 
-/* Variant: Highlight */
+.card-stats .card-subtitle {
+    font-size: 0.9rem;
+    margin-top: var(--space-2);
+}
+
+/* Highlight Card */
 .card-highlight {
     background: var(--gradient-primary);
     border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-highlight::before {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%, rgba(255, 255, 255, 0.2) 100%);
+    background-size: 200% 100%;
+    animation: shine 3s ease-in-out infinite;
+}
+
+@keyframes shine {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 .card-highlight:hover {
-    background: var(--gradient-primary);
     transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--glow-green);
 }
 
 .card-highlight .card-subtitle,
@@ -86,25 +183,78 @@
     color: rgba(255, 255, 255, 0.9);
 }
 
-/* Variant: Warning */
+/* Warning Card */
 .card-warning {
-    border-color: var(--warning);
-    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+    background: linear-gradient(145deg,
+            rgba(245, 158, 11, 0.15) 0%,
+            rgba(15, 23, 42, 0.8) 100%);
 }
 
-/* Variant: Danger */
+.card-warning::before {
+    background: var(--warning);
+}
+
+.card-warning:hover {
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+}
+
+/* Danger Card */
 .card-danger {
-    border-color: var(--danger);
-    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    background: linear-gradient(145deg,
+            rgba(239, 68, 68, 0.15) 0%,
+            rgba(15, 23, 42, 0.8) 100%);
 }
 
-/* Variant: Success */
+.card-danger::before {
+    background: var(--danger);
+}
+
+.card-danger:hover {
+    border-color: rgba(239, 68, 68, 0.5);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+/* Success Card */
 .card-success {
-    border-color: var(--success);
-    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+    background: linear-gradient(145deg,
+            rgba(34, 197, 94, 0.15) 0%,
+            rgba(15, 23, 42, 0.8) 100%);
 }
 
-/* Responsive */
+.card-success::before {
+    background: var(--success);
+}
+
+.card-success:hover {
+    border-color: rgba(34, 197, 94, 0.5);
+    box-shadow: var(--glow-green);
+}
+
+/* Info Card */
+.card-info {
+    border-color: rgba(14, 165, 233, 0.3);
+    background: linear-gradient(145deg,
+            rgba(14, 165, 233, 0.15) 0%,
+            rgba(15, 23, 42, 0.8) 100%);
+}
+
+.card-info::before {
+    background: var(--info);
+}
+
+.card-info:hover {
+    border-color: rgba(14, 165, 233, 0.5);
+    box-shadow: var(--glow-blue);
+}
+
+/* ===================================
+   RESPONSIVE
+   =================================== */
+
 @media (max-width: 768px) {
     .card {
         padding: var(--space-4);
