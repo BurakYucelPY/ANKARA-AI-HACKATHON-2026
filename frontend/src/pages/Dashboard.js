@@ -1,53 +1,94 @@
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { getFields, checkAllFields, getCurrentWeather } from '../services/api';
 import Card from '../components/Card';
 import './Dashboard.css';
 
-/**
- * Dashboard Sayfası
- * Ana sayfa - toplam kar, aktif sulama, sonraki sulama ve son aktiviteler
- */
 const Dashboard = () => {
-    // Mock veriler (backend entegrasyonunda API'den gelecek)
+    const { user } = useAuth();
+    const [fieldsData, setFieldsData] = useState([]);
+    const [irrigationResults, setIrrigationResults] = useState(null);
+    const [weather, setWeather] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // Aktif sulama durumu (null = aktif sulama yok)
-    const activeIrrigation = null; // Örnek: { field: 'Buğday Tarlası', startTime: '14:30', duration: 15, remaining: 8 }
+    useEffect(() => {
+        const fetchDashboard = async () => {
+            setLoading(true);
+            try {
+                const fieldsRes = await getFields(user.id);
+                const fields = fieldsRes.data;
+                setFieldsData(fields);
 
-    // Sonraki planlanan sulama
-    const nextIrrigation = {
-        field: 'Domates Serası',
-        scheduledTime: '16:00',
-        date: 'Bugün',
-        duration: 20
+                // Sulama kararlarını çek (tarlalar varsa)
+                if (fields.length > 0) {
+                    try {
+                        const irRes = await checkAllFields(user.id);
+                        setIrrigationResults(irRes.data);
+                    } catch { /* sulama analizi opsiyonel */ }
+
+                    // İlk tarlanın ilçesinden hava durumu çek
+                    try {
+                        const weatherRes = await getCurrentWeather(fields[0].ilce);
+                        setWeather(weatherRes.data);
+                    } catch { /* hava durumu opsiyonel */ }
+                }
+            } catch (err) {
+                console.error('Dashboard verileri yüklenemedi:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchDashboard();
+    }, [user.id]);
+
+    // Sulama kararlarından aktif ve sonraki sulamayı çıkar
+    const getIrrigationInfo = () => {
+        if (!irrigationResults || !irrigationResults.tarlalar) return { active: null, next: null, urgentFields: [] };
+
+        const tarlalar = irrigationResults.tarlalar;
+        const active = tarlalar.find(t => t.pompa === 'AÇIK' || t.pompa === 'YARIM_DOZ');
+        const next = tarlalar.find(t => t.karar_ozeti?.includes('SULAMA_GEREKLI') || t.karar_ozeti?.includes('KRITIK'));
+        const urgentFields = tarlalar.filter(t => t.pompa !== 'KAPALI');
+
+        return { active: active || null, next: next || null, urgentFields };
     };
 
-    // Sistem başlangıcından itibaren toplam istatistikler
+    // Sistem istatistikleri (kısmen dummy — backend'de istatistik endpoint'i yok)
     const systemStats = {
         startDate: '15 Ocak 2026',
-        totalWaterSaved: 125000, // Litre
-        totalProfit: 12450, // TL cinsinden
-        daysActive: 21
+        totalWaterSaved: 125000,
+        totalProfit: 12450,
+        daysActive: Math.floor((new Date() - new Date('2026-01-15')) / 86400000),
     };
 
-    // Son aktiviteler
-    const recentActivities = [
-        { id: 1, message: 'Buğday tarlası sulandı (12 dk)', time: '10 dakika önce', type: 'success' },
-        { id: 2, message: 'Sensör #12 bakım gerektiyor', time: '1 saat önce', type: 'warning' },
-        { id: 3, message: 'Domates serası sulama planlandı', time: '2 saat önce', type: 'info' },
-        { id: 4, message: 'Mısır tarlası nem seviyesi kritik', time: '3 saat önce', type: 'danger' },
-        { id: 5, message: 'Patates tarlası sulandı (18 dk)', time: '5 saat önce', type: 'success' },
-    ];
+    const recentActivities = irrigationResults?.tarlalar
+        ? irrigationResults.tarlalar.slice(0, 5).map((t, i) => ({
+            id: i,
+            message: `${t.tarla_adi}: ${t.detay || t.karar_ozeti}`,
+            time: 'Az önce analiz edildi',
+            type: t.pompa === 'KAPALI' ? 'success' : t.pompa === 'AÇIK' ? 'danger' : 'warning',
+        }))
+        : [
+            { id: 1, message: 'Sistem başlatıldı', time: 'Az önce', type: 'info' },
+        ];
 
-    // Para formatla
-    const formatMoney = (amount) => {
-        return amount.toLocaleString('tr-TR');
-    };
+    const formatMoney = (amount) => amount.toLocaleString('tr-TR');
+    const formatLiters = (liters) => liters >= 1000 ? `${(liters / 1000).toFixed(1)}K` : liters.toString();
 
-    // Litre formatla
-    const formatLiters = (liters) => {
-        if (liters >= 1000) {
-            return `${(liters / 1000).toFixed(1)}K`;
-        }
-        return liters.toString();
-    };
+    const { active: activeIrrigation, next: nextIrrigationData } = getIrrigationInfo();
+
+    if (loading) {
+        return (
+            <div className="dashboard">
+                <div className="dashboard-header">
+                    <div className="dashboard-welcome">
+                        <h1>Yükleniyor... ⏳</h1>
+                        <p>Dashboard verileri hazırlanıyor</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="dashboard">
@@ -64,6 +105,7 @@ const Dashboard = () => {
                     </div>
                     <p className="profit-subtitle">
                         🌱 {systemStats.startDate} tarihinden beri • {systemStats.daysActive} gün aktif
+                        {fieldsData.length > 0 && ` • ${fieldsData.length} tarla`}
                     </p>
                 </div>
             </div>
@@ -71,8 +113,10 @@ const Dashboard = () => {
             {/* Header */}
             <div className="dashboard-header">
                 <div className="dashboard-welcome">
-                    <h1>Hoş Geldiniz! 👋</h1>
-                    <p>Akıllı sulama sisteminizin özet durumu</p>
+                    <h1>Hoş Geldiniz, {user.full_name || user.email}! 👋</h1>
+                    <p>Akıllı sulama sisteminizin özet durumu
+                        {weather && ` • ${weather.konum}: ${weather.sicaklik}°C ${weather.emoji || ''}`}
+                    </p>
                 </div>
                 <div className="dashboard-date">
                     {new Date().toLocaleDateString('tr-TR', {
@@ -96,21 +140,12 @@ const Dashboard = () => {
                     {activeIrrigation ? (
                         <div className="irrigation-active">
                             <div className="irrigation-field">
-                                <span className="field-name">{activeIrrigation.field}</span>
-                                <span className="irrigation-badge active-badge">Sulama Devam Ediyor</span>
+                                <span className="field-name">{activeIrrigation.tarla_adi}</span>
+                                <span className="irrigation-badge active-badge">Sulama Gerekli — {activeIrrigation.pompa}</span>
                             </div>
-                            <div className="irrigation-progress">
-                                <div className="progress-info">
-                                    <span>Kalan süre: {activeIrrigation.remaining} dk</span>
-                                    <span>{activeIrrigation.duration} dk toplam</span>
-                                </div>
-                                <div className="progress-bar">
-                                    <div
-                                        className="progress-bar-fill irrigation-progress-fill"
-                                        style={{ width: `${((activeIrrigation.duration - activeIrrigation.remaining) / activeIrrigation.duration) * 100}%` }}
-                                    ></div>
-                                </div>
-                            </div>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--gray-300)', marginTop: '0.5rem' }}>
+                                {activeIrrigation.detay}
+                            </p>
                             <div className="water-animation">
                                 <span className="water-drop">💧</span>
                                 <span className="water-drop">💧</span>
@@ -119,7 +154,7 @@ const Dashboard = () => {
                         </div>
                     ) : (
                         <div className="irrigation-inactive">
-                            <p className="no-irrigation-text">Şu an aktif sulama bulunmuyor</p>
+                            <p className="no-irrigation-text">Şu an aktif sulama gereksinimi yok</p>
                             <span className="inactive-icon">🌾</span>
                         </div>
                     )}
@@ -129,17 +164,31 @@ const Dashboard = () => {
                 <Card className="next-irrigation-card">
                     <div className="irrigation-status-header">
                         <span className="irrigation-icon">⏰</span>
-                        <h3>Sonraki Sulama</h3>
+                        <h3>Sulama Analizi</h3>
                     </div>
                     <div className="next-irrigation-content">
-                        <div className="next-irrigation-time">
-                            <span className="next-date">{nextIrrigation.date}</span>
-                            <span className="next-time">{nextIrrigation.scheduledTime}</span>
-                        </div>
-                        <div className="next-irrigation-details">
-                            <span className="next-field">📍 {nextIrrigation.field}</span>
-                            <span className="next-duration">⏱️ {nextIrrigation.duration} dakika</span>
-                        </div>
+                        {irrigationResults ? (
+                            <>
+                                <div className="next-irrigation-time">
+                                    <span className="next-date">{irrigationResults.toplam_tarla} Tarla</span>
+                                    <span className="next-time">Analiz Edildi</span>
+                                </div>
+                                <div className="next-irrigation-details">
+                                    {nextIrrigationData ? (
+                                        <>
+                                            <span className="next-field">📍 {nextIrrigationData.tarla_adi}</span>
+                                            <span className="next-duration">🔔 {nextIrrigationData.karar_ozeti}</span>
+                                        </>
+                                    ) : (
+                                        <span className="next-field">✅ Tüm tarlalar iyi durumda</span>
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="next-irrigation-details">
+                                <span className="next-field">{fieldsData.length === 0 ? 'Henüz tarla yok' : 'Analiz yapılamadı'}</span>
+                            </div>
+                        )}
                     </div>
                 </Card>
             </div>
@@ -162,7 +211,7 @@ const Dashboard = () => {
             <Card className="activities-card">
                 <div className="card-header-custom">
                     <span className="header-icon">📋</span>
-                    <h3>Son Aktiviteler</h3>
+                    <h3>Sulama Durumları</h3>
                 </div>
                 <ul className="activity-list">
                     {recentActivities.map((activity) => (

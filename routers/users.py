@@ -25,6 +25,16 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 # --- ENDPOINTLER ---
 
+# 0. KULLANICI GİRİŞİ
+@router.post("/login", response_model=schemas.User)
+def login_user(credentials: schemas.UserLogin, db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.email == credentials.email).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Kullanıcı bulunamadı")
+    if not verify_password(credentials.password, db_user.hashed_password):
+        raise HTTPException(status_code=401, detail="Şifre hatalı")
+    return db_user
+
 # 1. KULLANICI KAYDI
 @router.post("/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):

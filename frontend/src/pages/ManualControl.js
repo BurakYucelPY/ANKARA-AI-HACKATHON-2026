@@ -1,25 +1,59 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { getFields, checkIrrigation } from '../services/api';
 import Card from '../components/Card';
 import './ManualControl.css';
 
-/**
- * ManualControl Sayfası - Manuel Yönetim
- * Ekstrem durumlar için sulama sisteminin manuel kontrolü
- */
 const ManualControl = () => {
+    const { user } = useAuth();
     const [selectedField, setSelectedField] = useState('');
     const [duration, setDuration] = useState(15);
     const [isWatering, setIsWatering] = useState(false);
     const [wateringFieldId, setWateringFieldId] = useState(null);
+    const [fields, setFields] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [irrigationAdvice, setIrrigationAdvice] = useState(null);
 
-    const fields = [
-        { id: 1, name: 'Buğday Tarlası', moisture: 68, status: 'normal' },
-        { id: 2, name: 'Domates Serası', moisture: 75, status: 'optimal' },
-        { id: 3, name: 'Mısır Tarlası', moisture: 35, status: 'warning' },
-        { id: 4, name: 'Ayçiçeği Tarlası', moisture: 55, status: 'normal' },
-        { id: 5, name: 'Biber Serası', moisture: 20, status: 'critical' },
-        { id: 6, name: 'Patates Tarlası', moisture: 62, status: 'optimal' },
-    ];
+    useEffect(() => {
+        const fetchFields = async () => {
+            try {
+                const res = await getFields(user.id);
+                const backendFields = res.data.map(f => {
+                    const logs = f.sensor_logs || [];
+                    const last = logs.length > 0 ? logs[logs.length - 1] : null;
+                    const moisture = last ? last.moisture : null;
+                    const pt = f.plant_type;
+                    let status = 'normal';
+                    if (moisture !== null && pt) {
+                        if (moisture < pt.critical_moisture) status = 'critical';
+                        else if (moisture < pt.min_moisture) status = 'warning';
+                        else if (moisture >= pt.min_moisture && moisture <= pt.max_moisture) status = 'optimal';
+                    }
+                    return { id: f.id, name: f.name, moisture: moisture ?? '-', status };
+                });
+                setFields(backendFields);
+            } catch (err) {
+                console.error('Tarlalar yüklenemedi:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchFields();
+    }, [user.id]);
+
+    // Tarla seçildiğinde sulama tavsiyesi çek
+    useEffect(() => {
+        if (!selectedField) { setIrrigationAdvice(null); return; }
+        const fetchAdvice = async () => {
+            try {
+                const res = await checkIrrigation(parseInt(selectedField));
+                setIrrigationAdvice(res.data);
+            } catch {
+                setIrrigationAdvice(null);
+            }
+        };
+        fetchAdvice();
+    }, [selectedField]);
 
     const handleStartWatering = () => {
         if (!selectedField) return;
@@ -38,6 +72,22 @@ const ManualControl = () => {
     };
 
     const criticalFields = fields.filter(f => f.status === 'critical' || f.status === 'warning');
+
+    if (loading) {
+        return (
+            <div className="manual-control">
+                <div className="page-header">
+                    <div className="page-header-content">
+                        <h1 className="page-title">🎛️ Manuel Yönetim</h1>
+                        <p className="page-subtitle">Veriler yükleniyor...</p>
+                    </div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--gray-400)' }}>
+                    <p style={{ fontSize: '2rem' }}>⏳</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="manual-control">
@@ -79,7 +129,7 @@ const ManualControl = () => {
                                 <option value="">-- Tarla Seçin --</option>
                                 {fields.map((field) => (
                                     <option key={field.id} value={field.id}>
-                                        {field.name} (Nem: %{field.moisture})
+                                        {field.name} {field.moisture !== '-' ? `(Nem: %${field.moisture})` : '(Veri yok)'}
                                     </option>
                                 ))}
                             </select>
@@ -147,6 +197,21 @@ const ManualControl = () => {
                                 <p className="watering-duration">Kalan süre: {duration} dakika</p>
                             </div>
                         )}
+
+                        {/* Sulama tavsiyesi (backend'den) */}
+                        {irrigationAdvice && irrigationAdvice.karar && (
+                            <div style={{
+                                marginTop: '1rem', padding: '0.75rem 1rem',
+                                background: 'rgba(76,175,80,0.1)', border: '1px solid rgba(76,175,80,0.3)',
+                                borderRadius: 'var(--radius-md)', fontSize: '0.85rem'
+                            }}>
+                                <strong>Sistem Tavsiyesi:</strong> {irrigationAdvice.karar.detay}
+                                <br/>
+                                <span style={{ color: 'var(--gray-400)' }}>
+                                    Pompa: {irrigationAdvice.karar.pompa} | Aciliyet: {irrigationAdvice.karar.aciliyet}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </Card>
 
@@ -165,16 +230,18 @@ const ManualControl = () => {
                                     </span>
                                 </div>
                                 <div className="field-moisture">
-                                    <span className="moisture-label">Nem: %{field.moisture}</span>
-                                    <div className="progress-bar">
-                                        <div
-                                            className="progress-bar-fill"
-                                            style={{
-                                                width: `${field.moisture}%`,
-                                                background: field.moisture >= 60 ? 'var(--success)' : field.moisture >= 40 ? 'var(--warning)' : 'var(--danger)'
-                                            }}
-                                        ></div>
-                                    </div>
+                                    <span className="moisture-label">Nem: {field.moisture !== '-' ? `%${field.moisture}` : 'Veri yok'}</span>
+                                    {field.moisture !== '-' && (
+                                        <div className="progress-bar">
+                                            <div
+                                                className="progress-bar-fill"
+                                                style={{
+                                                    width: `${field.moisture}%`,
+                                                    background: field.moisture >= 60 ? 'var(--success)' : field.moisture >= 40 ? 'var(--warning)' : 'var(--danger)'
+                                                }}
+                                            ></div>
+                                        </div>
+                                    )}
                                 </div>
                                 {wateringFieldId === field.id && (
                                     <div className="field-watering-indicator">

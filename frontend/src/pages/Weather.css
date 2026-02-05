@@ -197,6 +197,31 @@
     color: var(--gray-500);
 }
 
+/* Forecast Extra Info */
+.forecast-extra {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-top: var(--space-1);
+}
+
+.forecast-humidity,
+.forecast-wind,
+.forecast-rain {
+    font-size: 0.65rem;
+    color: var(--gray-400);
+    white-space: nowrap;
+}
+
+.forecast-humidity {
+    color: var(--info);
+}
+
+.forecast-rain {
+    color: var(--primary);
+}
+
 /* Fields at this location */
 .weather-fields {
     padding-top: var(--space-4);

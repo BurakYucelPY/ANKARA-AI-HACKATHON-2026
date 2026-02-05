@@ -42,6 +42,15 @@ ILCE_KOORDINATLARI = {
     "alasehir": {"lat": 38.3500, "lon": 28.5167, "il": "Manisa"},
 }
 
+def ruzgar_yonu_text(derece: float) -> str:
+    """Rüzgar yönü derecesini Türkçe metne çevirir"""
+    if derece is None:
+        return ""
+    yonler = ["Kuzey", "Kuzeydoğu", "Doğu", "Güneydoğu", "Güney", "Güneybatı", "Batı", "Kuzeybatı"]
+    idx = round(derece / 45) % 8
+    return yonler[idx]
+
+
 def hava_kodu_aciklama(code: int) -> dict:
     """WMO hava durumu kodunu Türkçe açıklamaya çevirir"""
     kodlar = {
@@ -96,14 +105,23 @@ def get_real_weather(
         latitude, longitude = 39.93, 32.85
         lokasyon = "Ankara (Varsayılan)"
     
-    url = f"https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&current_weather=true"
+    url = (
+        f"https://api.open-meteo.com/v1/forecast?"
+        f"latitude={latitude}&longitude={longitude}"
+        f"&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,wind_direction_10m,weather_code"
+        f"&timezone=Europe/Istanbul"
+    )
     
     response = requests.get(url)
     data = response.json()
     
-    current = data.get("current_weather", {})
-    temp = current.get("temperature")
-    weather_code = current.get("weathercode", 0)
+    current = data.get("current", {})
+    temp = current.get("temperature_2m")
+    windspeed = current.get("wind_speed_10m")
+    winddirection = current.get("wind_direction_10m")
+    weather_code = current.get("weather_code", 0)
+    humidity = current.get("relative_humidity_2m")
+    feels_like = current.get("apparent_temperature")
     
     hava_bilgi = hava_kodu_aciklama(weather_code)
     
@@ -111,6 +129,11 @@ def get_real_weather(
         "konum": lokasyon,
         "koordinat": {"lat": latitude, "lon": longitude},
         "sicaklik": temp,
+        "hissedilen": feels_like,
+        "nem": humidity,
+        "ruzgar_hizi": windspeed,
+        "ruzgar_yonu": winddirection,
+        "ruzgar_yonu_text": ruzgar_yonu_text(winddirection),
         "durum": hava_bilgi["durum"],
         "emoji": hava_bilgi["emoji"],
         "yagis_var_mi": hava_bilgi["yagis"],
@@ -147,12 +170,12 @@ def get_hourly_forecast(
         latitude, longitude = 39.93, 32.85
         lokasyon = "Ankara (Varsayılan)"
     
-    # Open-Meteo'dan saatlik veri çek
+    # Open-Meteo'dan saatlik veri çek (6 gün = 5 günlük tahmin için yeterli)
     url = (
         f"https://api.open-meteo.com/v1/forecast?"
         f"latitude={latitude}&longitude={longitude}"
-        f"&hourly=temperature_2m,precipitation_probability,precipitation,weathercode"
-        f"&forecast_days=2&timezone=Europe/Istanbul"
+        f"&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weathercode,wind_speed_10m,wind_direction_10m"
+        f"&forecast_days=6&timezone=Europe/Istanbul"
     )
     
     response = requests.get(url)
@@ -161,9 +184,12 @@ def get_hourly_forecast(
     hourly = data.get("hourly", {})
     times = hourly.get("time", [])
     temps = hourly.get("temperature_2m", [])
+    humidities = hourly.get("relative_humidity_2m", [])
     rain_probs = hourly.get("precipitation_probability", [])
     rain_amounts = hourly.get("precipitation", [])
     codes = hourly.get("weathercode", [])
+    wind_speeds = hourly.get("wind_speed_10m", [])
+    wind_dirs = hourly.get("wind_direction_10m", [])
     
     # Şu anki saatten itibaren al
     now = datetime.now()
@@ -195,6 +221,9 @@ def get_hourly_forecast(
             "tarih": forecast_time.strftime("%d/%m"),
             "tam_zaman": forecast_time.isoformat(),
             "sicaklik": temps[i] if i < len(temps) else None,
+            "nem": humidities[i] if i < len(humidities) else None,
+            "ruzgar_hizi": wind_speeds[i] if i < len(wind_speeds) else None,
+            "ruzgar_yonu": wind_dirs[i] if i < len(wind_dirs) else None,
             "yagis_olasiligi": rain_probs[i] if i < len(rain_probs) else 0,
             "beklenen_yagis_mm": rain_amounts[i] if i < len(rain_amounts) else 0,
             "durum": hava_bilgi["durum"],

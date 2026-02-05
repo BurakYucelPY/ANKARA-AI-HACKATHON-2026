@@ -1,5 +1,7 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/Layout';
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Fields from './pages/Fields';
 import PlantLibrary from './pages/PlantLibrary';
@@ -8,23 +10,44 @@ import Sensors from './pages/Sensors';
 import Weather from './pages/Weather';
 import './App.css';
 
-/**
- * Ana Uygulama Bileşeni
- * Single Responsibility: Routing ve layout yönetimi
- */
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+  return children;
+};
+
+function AppRoutes() {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+
+  return (
+    <Routes>
+      <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/*" element={
+        <ProtectedRoute>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/fields" element={<Fields />} />
+              <Route path="/weather" element={<Weather />} />
+              <Route path="/plants" element={<PlantLibrary />} />
+              <Route path="/manual" element={<ManualControl />} />
+              <Route path="/sensors" element={<Sensors />} />
+            </Routes>
+          </Layout>
+        </ProtectedRoute>
+      } />
+    </Routes>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/fields" element={<Fields />} />
-          <Route path="/weather" element={<Weather />} />
-          <Route path="/plants" element={<PlantLibrary />} />
-          <Route path="/manual" element={<ManualControl />} />
-          <Route path="/sensors" element={<Sensors />} />
-        </Routes>
-      </Layout>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </BrowserRouter>
   );
 }

@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
-/**
- * Sidebar Navigasyon Bileşeni
- * Mobilde hamburger menü olarak çalışır
- */
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const navItems = [
     { path: '/', label: 'Ana Sayfa', icon: '🏠' },
@@ -40,7 +38,7 @@ const Navbar = () => {
         </div>
       </header>
 
-      {/* Overlay (mobilde menü açıkken) */}
+      {/* Overlay */}
       <div
         className={`sidebar-overlay ${isOpen ? 'visible' : ''}`}
         onClick={closeMenu}
@@ -71,6 +69,17 @@ const Navbar = () => {
         </ul>
 
         <div className="sidebar-footer">
+          {user && (
+            <div className="sidebar-user">
+              <div className="sidebar-user-info">
+                <span className="sidebar-user-icon">👤</span>
+                <span className="sidebar-user-name">{user.full_name || user.email}</span>
+              </div>
+              <button className="sidebar-logout-btn" onClick={logout} title="Çıkış Yap">
+                🚪
+              </button>
+            </div>
+          )}
           <p>© 2026 AquaSmart</p>
         </div>
       </nav>
