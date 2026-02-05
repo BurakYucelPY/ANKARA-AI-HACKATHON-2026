@@ -1,0 +1,237 @@
+.dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-8);
+}
+
+.dashboard-welcome h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-2);
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dashboard-welcome p {
+    color: var(--gray-400);
+    font-size: 1.1rem;
+}
+
+.dashboard-date {
+    color: var(--gray-400);
+    font-size: 0.9rem;
+    text-align: right;
+}
+
+/* İstatistikler */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+}
+
+.stat-card {
+    text-align: center;
+    padding: var(--space-6);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: var(--space-3);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--space-2);
+}
+
+.stat-label {
+    color: var(--gray-400);
+    font-size: 0.9rem;
+}
+
+.stat-card-0 {
+    animation-delay: 0.1s;
+}
+
+.stat-card-1 {
+    animation-delay: 0.2s;
+}
+
+.stat-card-2 {
+    animation-delay: 0.3s;
+}
+
+.stat-card-3 {
+    animation-delay: 0.4s;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+/* Aktiviteler */
+.activity-list {
+    list-style: none;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+}
+
+.activity-success .activity-indicator {
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+}
+
+.activity-warning .activity-indicator {
+    background: var(--warning);
+    box-shadow: 0 0 8px var(--warning);
+}
+
+.activity-info .activity-indicator {
+    background: var(--info);
+    box-shadow: 0 0 8px var(--info);
+}
+
+.activity-danger .activity-indicator {
+    background: var(--danger);
+    box-shadow: 0 0 8px var(--danger);
+}
+
+.activity-message {
+    color: var(--gray-200);
+    font-size: 0.9rem;
+    margin-bottom: var(--space-1);
+}
+
+.activity-time {
+    color: var(--gray-500);
+    font-size: 0.75rem;
+}
+
+/* Hızlı Erişim */
+.quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.quick-action-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.quick-action-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(8px);
+}
+
+.quick-action-icon {
+    font-size: 1.5rem;
+}
+
+.quick-action-text h4 {
+    color: white;
+    margin-bottom: var(--space-1);
+}
+
+.quick-action-text p {
+    font-size: 0.8rem;
+    color: var(--gray-400);
+}
+
+/* Bilgi Kartı */
+.info-card {
+    margin-top: var(--space-6);
+}
+
+.info-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+.info-icon {
+    font-size: 3rem;
+}
+
+.info-text h3 {
+    margin-bottom: var(--space-2);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
+    .dashboard-date {
+        text-align: left;
+    }
+
+    .dashboard-welcome h1 {
+        font-size: 1.75rem;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-content {
+        flex-direction: column;
+        text-align: center;
+    }
+}

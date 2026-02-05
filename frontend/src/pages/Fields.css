@@ -1,0 +1,239 @@
+.fields-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-8);
+}
+
+.page-header-content {
+    flex: 1;
+}
+
+/* Özet Bilgiler */
+.fields-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+}
+
+.summary-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4) var(--space-6);
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.summary-warning .summary-value {
+    background: linear-gradient(135deg, var(--warning) 0%, var(--danger) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.summary-label {
+    color: var(--gray-400);
+    font-size: 0.85rem;
+    margin-top: var(--space-1);
+}
+
+/* Tarla Grid */
+.fields-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+}
+
+.field-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.field-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+.field-optimal::before {
+    background: var(--success);
+}
+
+.field-warning::before {
+    background: var(--warning);
+}
+
+.field-critical::before {
+    background: var(--danger);
+}
+
+.field-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-4);
+}
+
+.field-name {
+    font-size: 1.25rem;
+    color: white;
+    margin-bottom: var(--space-1);
+}
+
+.field-location {
+    font-size: 0.85rem;
+    color: var(--gray-400);
+}
+
+.field-zone {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    margin-top: var(--space-1);
+}
+
+.field-plant {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-4);
+}
+
+.plant-icon {
+    font-size: 1.5rem;
+}
+
+.plant-name {
+    flex: 1;
+    color: white;
+    font-weight: 500;
+}
+
+.field-area {
+    color: var(--gray-400);
+    font-size: 0.9rem;
+}
+
+/* Sensör Bilgileri */
+.field-sensors {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.sensor-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sensor-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.sensor-icon {
+    font-size: 1.25rem;
+}
+
+.sensor-label {
+    color: var(--gray-400);
+    font-size: 0.9rem;
+}
+
+.sensor-value {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.sensor-value-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
+    flex: 1;
+    max-width: 120px;
+}
+
+.sensor-value-container .progress-bar {
+    width: 100%;
+}
+
+/* Footer */
+.field-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.last-watered {
+    font-size: 0.85rem;
+    color: var(--gray-400);
+}
+
+.btn-sm {
+    padding: var(--space-2) var(--space-4);
+    font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .fields-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .fields-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        gap: var(--space-4);
+        align-items: flex-start;
+    }
+
+    .fields-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fields-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .fields-summary {
+        grid-template-columns: 1fr;
+    }
+}

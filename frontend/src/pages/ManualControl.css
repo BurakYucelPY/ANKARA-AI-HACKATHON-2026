@@ -1,0 +1,262 @@
+.manual-control {
+    max-width: 1400px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Uyarı Kartı */
+.warning-card {
+    margin-bottom: var(--space-6);
+}
+
+.warning-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.warning-icon {
+    font-size: 2.5rem;
+}
+
+.warning-text h3 {
+    color: var(--warning);
+    margin-bottom: var(--space-2);
+}
+
+.warning-text p {
+    color: var(--gray-300);
+}
+
+/* Control Grid */
+.control-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+/* Control Panel */
+.control-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.form-group label {
+    color: var(--gray-300);
+    font-weight: 500;
+}
+
+/* Duration Control */
+.duration-control {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.duration-btn {
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-size: 1.5rem;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.duration-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.duration-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.duration-input {
+    width: 100px;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* Control Buttons */
+.control-buttons {
+    margin-top: var(--space-4);
+}
+
+.btn-large {
+    width: 100%;
+    padding: var(--space-5) var(--space-6);
+    font-size: 1.1rem;
+}
+
+/* Watering Status */
+.watering-status {
+    text-align: center;
+    padding: var(--space-6);
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: var(--radius-lg);
+    animation: pulse 2s infinite;
+}
+
+.watering-animation {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.water-drop {
+    font-size: 2rem;
+    animation: dropFall 1s infinite;
+}
+
+.water-drop:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.water-drop:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes dropFall {
+
+    0%,
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translateY(10px);
+        opacity: 0.5;
+    }
+}
+
+.watering-status p {
+    color: white;
+    margin-bottom: var(--space-2);
+}
+
+.watering-duration {
+    color: var(--success);
+    font-weight: 500;
+}
+
+/* Status Panel */
+.field-status-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.field-status-item {
+    padding: var(--space-4);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-lg);
+    border-left: 4px solid var(--info);
+    transition: all var(--transition-fast);
+}
+
+.field-status-item.optimal {
+    border-left-color: var(--success);
+}
+
+.field-status-item.warning {
+    border-left-color: var(--warning);
+}
+
+.field-status-item.critical {
+    border-left-color: var(--danger);
+}
+
+.field-status-item.watering {
+    background: rgba(34, 197, 94, 0.1);
+    animation: pulse 2s infinite;
+}
+
+.field-status-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+}
+
+.field-status-name {
+    color: white;
+    font-weight: 500;
+}
+
+.field-moisture {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.moisture-label {
+    font-size: 0.85rem;
+    color: var(--gray-400);
+}
+
+.field-watering-indicator {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--success);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* Info Note */
+.info-note {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.note-content {
+    display: flex;
+    gap: var(--space-4);
+}
+
+.note-icon {
+    font-size: 1.5rem;
+}
+
+.note-text h4 {
+    color: var(--info);
+    margin-bottom: var(--space-2);
+}
+
+.note-text p {
+    color: var(--gray-300);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .control-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .warning-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .note-content {
+        flex-direction: column;
+        text-align: center;
+    }
+}

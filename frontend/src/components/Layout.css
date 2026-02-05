@@ -1,0 +1,48 @@
+.layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.layout-main {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: var(--space-6);
+    transition: margin-left var(--transition-normal);
+}
+
+.layout-footer {
+    margin-left: var(--sidebar-width);
+    padding: var(--space-6);
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--gray-500);
+    font-size: 0.875rem;
+    transition: margin-left var(--transition-normal);
+}
+
+/* Tablet ve Mobil (900px ve altı) */
+@media (max-width: 900px) {
+    .layout-main {
+        margin-left: 0;
+        margin-top: var(--mobile-header-height);
+        padding: var(--space-4);
+    }
+
+    .layout-footer {
+        margin-left: 0;
+        padding: var(--space-4);
+    }
+}
+
+/* Mobil (600px ve altı) */
+@media (max-width: 600px) {
+    .layout-main {
+        padding: var(--space-3);
+    }
+
+    .layout-footer {
+        padding: var(--space-3);
+        font-size: 0.75rem;
+    }
+}

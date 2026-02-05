@@ -1,0 +1,249 @@
+/* ===================================
+   SIDEBAR NAVIGASYON STİLLERİ
+   =================================== */
+
+/* Sidebar Değişkenleri */
+:root {
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 70px;
+    --mobile-header-height: 60px;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: rgba(17, 24, 39, 0.98);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: transform var(--transition-normal);
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-logo {
+    font-size: 2rem;
+    animation: pulse 2s infinite;
+}
+
+.navbar-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Sidebar Menü */
+.sidebar-menu {
+    flex: 1;
+    list-style: none;
+    padding: var(--space-4);
+    overflow-y: auto;
+}
+
+.sidebar-item {
+    margin-bottom: var(--space-2);
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    color: var(--gray-400);
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-fast);
+    font-weight: 500;
+}
+
+.sidebar-link:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-link-active {
+    color: white;
+    background: var(--gradient-primary);
+}
+
+.sidebar-icon {
+    font-size: 1.5rem;
+    width: 32px;
+    text-align: center;
+}
+
+.sidebar-label {
+    font-size: 0.95rem;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    padding: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.sidebar-footer p {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+
+/* Mobil Header (varsayılan olarak gizli) */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--mobile-header-height);
+    background: rgba(17, 24, 39, 0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1001;
+}
+
+.mobile-header-content {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 var(--space-4);
+    gap: var(--space-3);
+}
+
+.mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.mobile-brand .navbar-logo {
+    font-size: 1.5rem;
+}
+
+.mobile-brand .navbar-title {
+    font-size: 1.25rem;
+}
+
+/* Hamburger Butonu */
+.hamburger-btn {
+    background: none;
+    border: none;
+    padding: var(--space-2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+    position: relative;
+}
+
+.hamburger-icon span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: white;
+    border-radius: 2px;
+    transition: all var(--transition-fast);
+}
+
+.hamburger-icon.open span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.hamburger-icon.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-icon.open span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Overlay */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-normal);
+}
+
+.sidebar-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ===================================
+   RESPONSIVE
+   =================================== */
+
+/* Tablet ve Mobil (900px ve altı) */
+@media (max-width: 900px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .mobile-header {
+        display: block;
+    }
+}
+
+/* Masaüstü (900px üstü) */
+@media (min-width: 901px) {
+    .sidebar-overlay {
+        display: none;
+    }
+
+    .mobile-header {
+        display: none;
+    }
+
+    .sidebar-footer {
+        display: block;
+    }
+}
+
+/* Küçük mobil */
+@media (max-width: 480px) {
+    .sidebar {
+        width: 85%;
+        max-width: 300px;
+    }
+
+    .mobile-brand .navbar-title {
+        font-size: 1.1rem;
+    }
+}

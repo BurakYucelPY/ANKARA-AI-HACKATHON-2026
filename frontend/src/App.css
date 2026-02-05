@@ -1,1 +1,32 @@
+/* App.css - Global Uygulama Stilleri */
 
+/* Ana container genişliği */
+.page-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Özel scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--gray-800);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gray-600);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-500);
+}
+
+/* Seçim rengi */
+::selection {
+    background: var(--primary-green);
+    color: white;
+}
