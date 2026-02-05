@@ -28,6 +28,8 @@ class PlantTypeBase(BaseModel):
     name: str
     min_moisture: float
     max_moisture: float
+    critical_moisture: float = 10.0  # Kritik nem sınırı (acil sulama)
+    max_wait_hours: int = 6  # Yağmur için maksimum bekleme süresi
 
 class PlantTypeCreate(PlantTypeBase):
     pass
@@ -58,6 +60,9 @@ class SensorLog(SensorLogBase):
 class FieldBase(BaseModel):
     name: str
     location: str
+    ilce: str = "cankaya"  # İlçe kodu (hava durumu için)
+    latitude: Optional[float] = None  # Özel koordinat
+    longitude: Optional[float] = None
     pump_flow_rate: float = 100.0
     water_unit_price: float = 1.5
 

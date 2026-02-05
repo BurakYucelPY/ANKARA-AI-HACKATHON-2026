@@ -9,8 +9,10 @@ class PlantType(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
-    min_moisture = Column(Float)
-    max_moisture = Column(Float)
+    min_moisture = Column(Float)  # Alt nem sınırı (örn: %30)
+    max_moisture = Column(Float)  # Üst nem sınırı (örn: %70)
+    critical_moisture = Column(Float, default=10.0)  # KRİTİK sınır - acil sulama (örn: %10)
+    max_wait_hours = Column(Integer, default=6)  # Yağmur için max bekleme süresi (saat)
     
     fields = relationship("Field", back_populates="plant_type")
 
@@ -32,7 +34,10 @@ class Field(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String) 
-    location = Column(String)
+    location = Column(String)  # Genel adres/açıklama
+    ilce = Column(String, default="cankaya")  # İlçe kodu (weather API için)
+    latitude = Column(Float, nullable=True)  # Özel koordinat (opsiyonel)
+    longitude = Column(Float, nullable=True)  # Özel koordinat (opsiyonel)
     
     # Maliyet verileri
     pump_flow_rate = Column(Float, default=100.0)
