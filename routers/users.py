@@ -1,14 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
+import hashlib
 from typing import List
 import models, schemas
 from database import SessionLocal
 
 # Router tanımlıyoruz (app yerine router kullanacağız)
 router = APIRouter(prefix="/users", tags=["Users & Fields"])
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_db():
     db = SessionLocal()
@@ -17,8 +15,13 @@ def get_db():
     finally:
         db.close()
 
-def get_password_hash(password):
-    return pwd_context.hash(password)
+def get_password_hash(password: str) -> str:
+    """Basit SHA256 hash - production'da bcrypt kullanılmalı"""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Şifre doğrulama"""
+    return get_password_hash(plain_password) == hashed_password
 
 # --- ENDPOINTLER ---
 
