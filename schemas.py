@@ -28,8 +28,17 @@ class PlantTypeBase(BaseModel):
     name: str
     min_moisture: float
     max_moisture: float
-    critical_moisture: float = 10.0  # Kritik nem sınırı (acil sulama)
-    max_wait_hours: int = 6  # Yağmur için maksimum bekleme süresi
+    critical_moisture: float = 10.0
+    max_wait_hours: int = 6
+    icon: Optional[str] = "🌱"
+    category: Optional[str] = "Genel"
+    planting_time: Optional[str] = None
+    harvest_time: Optional[str] = None
+    water_need: Optional[str] = "Orta"
+    water_amount: Optional[str] = None
+    soil_type: Optional[str] = None
+    ideal_temp: Optional[str] = None
+    tips: Optional[str] = None  # JSON string
 
 class PlantTypeCreate(PlantTypeBase):
     pass

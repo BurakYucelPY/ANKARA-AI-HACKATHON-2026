@@ -14,6 +14,17 @@ class PlantType(Base):
     critical_moisture = Column(Float, default=10.0)  # KRİTİK sınır - acil sulama (örn: %10)
     max_wait_hours = Column(Integer, default=6)  # Yağmur için max bekleme süresi (saat)
     
+    # Zengin bitki bilgileri
+    icon = Column(String, default="🌱")
+    category = Column(String, default="Genel")
+    planting_time = Column(String, nullable=True)
+    harvest_time = Column(String, nullable=True)
+    water_need = Column(String, default="Orta")
+    water_amount = Column(String, nullable=True)
+    soil_type = Column(String, nullable=True)
+    ideal_temp = Column(String, nullable=True)
+    tips = Column(String, nullable=True)  # JSON array string
+    
     fields = relationship("Field", back_populates="plant_type")
 
 # 2. KULLANICILAR (CIFTCI)

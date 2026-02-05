@@ -22,7 +22,9 @@ const Login = () => {
         await login(email, password);
       }
     } catch (err) {
-      const msg = err.response?.data?.detail || 'Bir hata oluştu';
+      console.error('Login hatası:', err);
+      console.error('Response:', err.response);
+      const msg = err.response?.data?.detail || err.message || 'Bir hata oluştu';
       setError(msg);
     } finally {
       setLoading(false);
