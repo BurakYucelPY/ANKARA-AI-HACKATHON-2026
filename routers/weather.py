@@ -34,6 +34,19 @@ ILCE_KOORDINATLARI = {
     "selcuklu": {"lat": 37.9400, "lon": 32.4700, "il": "Konya"},
     "meram": {"lat": 37.8333, "lon": 32.4333, "il": "Konya"},
     "eregli": {"lat": 37.5167, "lon": 34.0500, "il": "Konya"},
+    "cumra": {"lat": 37.5722, "lon": 32.7744, "il": "Konya"},
+    "karapinar": {"lat": 37.7167, "lon": 33.5500, "il": "Konya"},
+    "cihanbeyli": {"lat": 38.6558, "lon": 32.9278, "il": "Konya"},
+    "aksehir": {"lat": 38.3575, "lon": 31.4158, "il": "Konya"},
+    "beysehir": {"lat": 37.6786, "lon": 31.7250, "il": "Konya"},
+    
+    # Antalya İlçeleri
+    "serik": {"lat": 36.9200, "lon": 31.1000, "il": "Antalya"},
+    "kumluca": {"lat": 36.3667, "lon": 30.2833, "il": "Antalya"},
+    
+    # Ağrı İlçeleri
+    "patnos": {"lat": 39.2333, "lon": 43.6833, "il": "Ağrı"},
+    "dogubayazit": {"lat": 39.7217, "lon": 44.0867, "il": "Ağrı"},
     
     # Diğer önemli tarım ilçeleri
     "tarsus": {"lat": 36.9167, "lon": 34.8833, "il": "Mersin"},

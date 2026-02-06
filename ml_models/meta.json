@@ -1,106 +1,233 @@
 {
   "1": {
-    "accuracy": 0.6667,
-    "f1_score": 0.6667,
-    "sample_count": 28,
-    "trained_at": "2026-02-06T09:24:06.745001",
+    "accuracy": 0.9592,
+    "f1_score": 0.9556,
+    "sample_count": 241,
+    "trained_at": "2026-02-06T14:10:37.886849",
     "feature_count": 14,
-    "rain_ratio": 0.3214,
+    "rain_ratio": 0.1203,
     "tahmin_guvenilirligi": {
-      "genel_isabet": 50.0,
+      "genel_isabet": 12.9,
+      "aylik_isabet": {
+        "1": 13.7,
+        "12": 12.0
+      },
+      "toplam_tahmin_yagmur": 101,
+      "gercekte_yagan": 13,
       "guvenilir_mi": false,
-      "mesaj": "Yetersiz eslestirme"
+      "esik": 60
     }
   },
   "2": {
-    "accuracy": 0.8333,
-    "f1_score": 0.7576,
-    "sample_count": 28,
-    "trained_at": "2026-02-06T09:24:06.880192",
+    "accuracy": 0.9184,
+    "f1_score": 0.8988,
+    "sample_count": 241,
+    "trained_at": "2026-02-06T14:10:38.022438",
     "feature_count": 14,
-    "rain_ratio": 0.2143,
+    "rain_ratio": 0.0539,
     "tahmin_guvenilirligi": {
-      "genel_isabet": 50.0,
+      "genel_isabet": 5.4,
+      "aylik_isabet": {
+        "1": 6.5,
+        "2": 0.0,
+        "12": 5.2
+      },
+      "toplam_tahmin_yagmur": 241,
+      "gercekte_yagan": 13,
       "guvenilir_mi": false,
-      "mesaj": "Yetersiz eslestirme"
+      "esik": 60
     }
   },
   "3": {
-    "accuracy": 1.0,
-    "f1_score": 1.0,
-    "sample_count": 28,
-    "trained_at": "2026-02-06T09:24:07.031928",
+    "accuracy": 0.898,
+    "f1_score": 0.8985,
+    "sample_count": 241,
+    "trained_at": "2026-02-06T14:10:38.193780",
     "feature_count": 14,
-    "rain_ratio": 0.1429,
+    "rain_ratio": 0.4191,
     "tahmin_guvenilirligi": {
-      "genel_isabet": 50.0,
-      "guvenilir_mi": false,
-      "mesaj": "Yetersiz eslestirme"
+      "genel_isabet": 82.6,
+      "aylik_isabet": {
+        "1": 86.2,
+        "2": 66.7,
+        "12": 81.0
+      },
+      "toplam_tahmin_yagmur": 109,
+      "gercekte_yagan": 90,
+      "guvenilir_mi": true,
+      "esik": 60
     }
   },
   "4": {
-    "accuracy": 0.8333,
-    "f1_score": 0.7576,
-    "sample_count": 28,
-    "trained_at": "2026-02-06T09:24:07.179884",
+    "accuracy": 0.7143,
+    "f1_score": 0.6897,
+    "sample_count": 241,
+    "trained_at": "2026-02-06T14:10:38.355616",
     "feature_count": 14,
-    "rain_ratio": 0.1071,
+    "rain_ratio": 0.2324,
     "tahmin_guvenilirligi": {
-      "genel_isabet": 50.0,
+      "genel_isabet": 29.5,
+      "aylik_isabet": {
+        "1": 23.8,
+        "2": 25.0,
+        "12": 37.5
+      },
+      "toplam_tahmin_yagmur": 78,
+      "gercekte_yagan": 23,
       "guvenilir_mi": false,
-      "mesaj": "Yetersiz eslestirme"
+      "esik": 60
     }
   },
   "5": {
-    "accuracy": 0.8333,
-    "f1_score": 0.7576,
-    "sample_count": 28,
-    "trained_at": "2026-02-06T09:24:07.331884",
+    "accuracy": 0.8367,
+    "f1_score": 0.8173,
+    "sample_count": 241,
+    "trained_at": "2026-02-06T14:10:38.514746",
     "feature_count": 14,
-    "rain_ratio": 0.1786,
+    "rain_ratio": 0.1909,
     "tahmin_guvenilirligi": {
-      "genel_isabet": 50.0,
+      "genel_isabet": 17.9,
+      "aylik_isabet": {
+        "1": 18.5,
+        "2": 18.2,
+        "12": 17.1
+      },
+      "toplam_tahmin_yagmur": 106,
+      "gercekte_yagan": 19,
       "guvenilir_mi": false,
-      "mesaj": "Yetersiz eslestirme"
+      "esik": 60
     }
   },
   "6": {
-    "accuracy": 0.8333,
-    "f1_score": 0.7576,
-    "sample_count": 28,
-    "trained_at": "2026-02-06T09:24:07.483258",
+    "accuracy": 0.6939,
+    "f1_score": 0.6912,
+    "sample_count": 241,
+    "trained_at": "2026-02-06T14:10:38.663732",
     "feature_count": 14,
-    "rain_ratio": 0.2143,
+    "rain_ratio": 0.3361,
     "tahmin_guvenilirligi": {
-      "genel_isabet": 50.0,
+      "genel_isabet": 36.4,
+      "aylik_isabet": {
+        "1": 30.3,
+        "2": 85.7,
+        "12": 25.0
+      },
+      "toplam_tahmin_yagmur": 143,
+      "gercekte_yagan": 52,
       "guvenilir_mi": false,
-      "mesaj": "Yetersiz eslestirme"
+      "esik": 60
     }
   },
   "7": {
-    "accuracy": 0.8333,
-    "f1_score": 0.7576,
-    "sample_count": 28,
-    "trained_at": "2026-02-06T09:24:07.633547",
+    "accuracy": 0.9388,
+    "f1_score": 0.9289,
+    "sample_count": 241,
+    "trained_at": "2026-02-06T14:10:38.816820",
     "feature_count": 14,
-    "rain_ratio": 0.2143,
+    "rain_ratio": 0.0456,
     "tahmin_guvenilirligi": {
-      "genel_isabet": 50.0,
+      "genel_isabet": 4.6,
+      "aylik_isabet": {
+        "1": 4.0,
+        "2": 9.5,
+        "12": 4.2
+      },
+      "toplam_tahmin_yagmur": 241,
+      "gercekte_yagan": 11,
       "guvenilir_mi": false,
-      "mesaj": "Yetersiz eslestirme"
+      "esik": 60
     }
   },
   "8": {
-    "accuracy": 0.8333,
-    "f1_score": 0.7576,
-    "sample_count": 28,
-    "trained_at": "2026-02-06T09:24:07.782095",
+    "accuracy": 0.6939,
+    "f1_score": 0.6755,
+    "sample_count": 241,
+    "trained_at": "2026-02-06T14:10:38.970434",
     "feature_count": 14,
-    "rain_ratio": 0.1071,
+    "rain_ratio": 0.2158,
+    "tahmin_guvenilirligi": {
+      "genel_isabet": 22.8,
+      "aylik_isabet": {
+        "1": 18.4,
+        "2": 33.3,
+        "12": 25.7
+      },
+      "toplam_tahmin_yagmur": 79,
+      "gercekte_yagan": 18,
+      "guvenilir_mi": false,
+      "esik": 60
+    }
+  },
+  "9": {
+    "accuracy": 0.8571,
+    "f1_score": 0.8588,
+    "sample_count": 241,
+    "trained_at": "2026-02-06T14:10:39.128796",
+    "feature_count": 14,
+    "rain_ratio": 0.2697,
+    "tahmin_guvenilirligi": {
+      "genel_isabet": 43.5,
+      "aylik_isabet": {
+        "1": 60.4,
+        "2": 72.7,
+        "12": 20.4
+      },
+      "toplam_tahmin_yagmur": 108,
+      "gercekte_yagan": 47,
+      "guvenilir_mi": false,
+      "esik": 60
+    }
+  },
+  "10": {
+    "accuracy": 0.8571,
+    "f1_score": 0.8582,
+    "sample_count": 241,
+    "trained_at": "2026-02-06T14:10:39.282410",
+    "feature_count": 14,
+    "rain_ratio": 0.332,
     "tahmin_guvenilirligi": {
       "genel_isabet": 50.0,
       "guvenilir_mi": false,
-      "mesaj": "Yetersiz eslestirme"
+      "mesaj": "Tahmin hic yagmur dememis"
+    }
+  },
+  "11": {
+    "accuracy": 0.8367,
+    "f1_score": 0.7933,
+    "sample_count": 241,
+    "trained_at": "2026-02-06T14:10:39.436669",
+    "feature_count": 14,
+    "rain_ratio": 0.166,
+    "tahmin_guvenilirligi": {
+      "genel_isabet": 20.4,
+      "aylik_isabet": {
+        "1": 18.9,
+        "12": 22.0
+      },
+      "toplam_tahmin_yagmur": 103,
+      "gercekte_yagan": 21,
+      "guvenilir_mi": false,
+      "esik": 60
+    }
+  },
+  "12": {
+    "accuracy": 0.8163,
+    "f1_score": 0.7507,
+    "sample_count": 241,
+    "trained_at": "2026-02-06T14:10:39.596202",
+    "feature_count": 14,
+    "rain_ratio": 0.1992,
+    "tahmin_guvenilirligi": {
+      "genel_isabet": 25.0,
+      "aylik_isabet": {
+        "1": 21.2,
+        "2": 66.7,
+        "12": 25.0
+      },
+      "toplam_tahmin_yagmur": 60,
+      "gercekte_yagan": 15,
+      "guvenilir_mi": false,
+      "esik": 60
     }
   }
 }
