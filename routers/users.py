@@ -66,3 +66,33 @@ def create_field_for_user(user_id: int, field: schemas.FieldCreate, db: Session 
 def read_user_fields(user_id: int, db: Session = Depends(get_db)):
     fields = db.query(models.Field).filter(models.Field.owner_id == user_id).all()
     return fields
+
+# 4. TARLA BİTKİ TÜRÜNÜ GÜNCELLE
+@router.put("/{user_id}/fields/{field_id}/plant-type", response_model=schemas.Field)
+def update_field_plant_type(
+    user_id: int,
+    field_id: int,
+    update_data: schemas.FieldUpdatePlantType,
+    db: Session = Depends(get_db)
+):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Kullanıcı bulunamadı")
+    
+    field = db.query(models.Field).filter(
+        models.Field.id == field_id,
+        models.Field.owner_id == user_id
+    ).first()
+    if not field:
+        raise HTTPException(status_code=404, detail="Tarla bulunamadı")
+    
+    plant_type = db.query(models.PlantType).filter(
+        models.PlantType.id == update_data.plant_type_id
+    ).first()
+    if not plant_type:
+        raise HTTPException(status_code=404, detail="Geçersiz bitki türü")
+    
+    field.plant_type_id = update_data.plant_type_id
+    db.commit()
+    db.refresh(field)
+    return field

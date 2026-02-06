@@ -97,6 +97,9 @@ class FieldBase(BaseModel):
 class FieldCreate(FieldBase):
     plant_type_id: int # Hangi bitki ekili?
 
+class FieldUpdatePlantType(BaseModel):
+    plant_type_id: int
+
 class Field(FieldBase):
     id: int
     owner_id: int
