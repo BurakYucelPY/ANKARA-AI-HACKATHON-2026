@@ -1,0 +1,170 @@
+{
+  "1": {
+    "accuracy": 0.9583,
+    "f1_score": 0.9589,
+    "sample_count": 720,
+    "trained_at": "2026-02-06T08:37:04.872039",
+    "feature_count": 14,
+    "rain_ratio": 0.2819,
+    "tahmin_guvenilirligi": {
+      "genel_isabet": 41.9,
+      "aylik_isabet": {
+        "1": 47.2,
+        "2": 50.0,
+        "11": 35.4,
+        "12": 42.9
+      },
+      "toplam_tahmin_yagmur": 198,
+      "gercekte_yagan": 83,
+      "guvenilir_mi": false,
+      "esik": 60
+    }
+  },
+  "2": {
+    "accuracy": 0.9167,
+    "f1_score": 0.9176,
+    "sample_count": 720,
+    "trained_at": "2026-02-06T08:37:05.027369",
+    "feature_count": 14,
+    "rain_ratio": 0.3083,
+    "tahmin_guvenilirligi": {
+      "genel_isabet": 43.4,
+      "aylik_isabet": {
+        "1": 54.4,
+        "2": 33.3,
+        "11": 33.3,
+        "12": 41.8
+      },
+      "toplam_tahmin_yagmur": 198,
+      "gercekte_yagan": 86,
+      "guvenilir_mi": false,
+      "esik": 60
+    }
+  },
+  "3": {
+    "accuracy": 0.9167,
+    "f1_score": 0.9183,
+    "sample_count": 720,
+    "trained_at": "2026-02-06T08:37:05.195780",
+    "feature_count": 14,
+    "rain_ratio": 0.3111,
+    "tahmin_guvenilirligi": {
+      "genel_isabet": 40.8,
+      "aylik_isabet": {
+        "1": 41.8,
+        "2": 57.1,
+        "11": 36.6,
+        "12": 40.6
+      },
+      "toplam_tahmin_yagmur": 233,
+      "gercekte_yagan": 95,
+      "guvenilir_mi": false,
+      "esik": 60
+    }
+  },
+  "4": {
+    "accuracy": 0.9236,
+    "f1_score": 0.9242,
+    "sample_count": 720,
+    "trained_at": "2026-02-06T08:37:05.376616",
+    "feature_count": 14,
+    "rain_ratio": 0.3194,
+    "tahmin_guvenilirligi": {
+      "genel_isabet": 45.6,
+      "aylik_isabet": {
+        "1": 46.9,
+        "2": 57.1,
+        "11": 35.7,
+        "12": 50.6
+      },
+      "toplam_tahmin_yagmur": 206,
+      "gercekte_yagan": 94,
+      "guvenilir_mi": false,
+      "esik": 60
+    }
+  },
+  "5": {
+    "accuracy": 0.9583,
+    "f1_score": 0.9583,
+    "sample_count": 720,
+    "trained_at": "2026-02-06T08:37:05.544041",
+    "feature_count": 14,
+    "rain_ratio": 0.2625,
+    "tahmin_guvenilirligi": {
+      "genel_isabet": 43.2,
+      "aylik_isabet": {
+        "1": 51.5,
+        "2": 28.6,
+        "11": 32.1,
+        "12": 46.7
+      },
+      "toplam_tahmin_yagmur": 213,
+      "gercekte_yagan": 92,
+      "guvenilir_mi": false,
+      "esik": 60
+    }
+  },
+  "6": {
+    "accuracy": 0.9097,
+    "f1_score": 0.91,
+    "sample_count": 720,
+    "trained_at": "2026-02-06T08:37:05.710482",
+    "feature_count": 14,
+    "rain_ratio": 0.2903,
+    "tahmin_guvenilirligi": {
+      "genel_isabet": 41.6,
+      "aylik_isabet": {
+        "1": 50.7,
+        "2": 18.2,
+        "11": 32.8,
+        "12": 43.8
+      },
+      "toplam_tahmin_yagmur": 238,
+      "gercekte_yagan": 99,
+      "guvenilir_mi": false,
+      "esik": 60
+    }
+  },
+  "7": {
+    "accuracy": 0.9375,
+    "f1_score": 0.9378,
+    "sample_count": 720,
+    "trained_at": "2026-02-06T08:37:05.877280",
+    "feature_count": 14,
+    "rain_ratio": 0.2444,
+    "tahmin_guvenilirligi": {
+      "genel_isabet": 29.9,
+      "aylik_isabet": {
+        "1": 24.2,
+        "2": 30.0,
+        "11": 29.3,
+        "12": 35.1
+      },
+      "toplam_tahmin_yagmur": 211,
+      "gercekte_yagan": 63,
+      "guvenilir_mi": false,
+      "esik": 60
+    }
+  },
+  "8": {
+    "accuracy": 0.9514,
+    "f1_score": 0.9508,
+    "sample_count": 720,
+    "trained_at": "2026-02-06T08:37:06.035145",
+    "feature_count": 14,
+    "rain_ratio": 0.2931,
+    "tahmin_guvenilirligi": {
+      "genel_isabet": 45.4,
+      "aylik_isabet": {
+        "1": 48.4,
+        "2": 58.3,
+        "11": 43.1,
+        "12": 42.3
+      },
+      "toplam_tahmin_yagmur": 205,
+      "gercekte_yagan": 93,
+      "guvenilir_mi": false,
+      "esik": 60
+    }
+  }
+}
