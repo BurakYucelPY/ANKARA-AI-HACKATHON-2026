@@ -46,4 +46,8 @@ export const checkAllFields = (userId) =>
 export const createSensorLog = (data) =>
   API.post('/simulation/sensor-log/', data);
 
+// ========== SENSORS ==========
+export const getSensors = (userId) =>
+  API.get(`/sensors/user/${userId}`);
+
 export default API;

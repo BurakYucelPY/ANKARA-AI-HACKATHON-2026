@@ -109,7 +109,21 @@ def check_irrigation_status(field_id: int, db: Session = Depends(get_db)):
     
     mevcut_nem = last_log.moisture
     
-    # D. 🧠 AKILLI KARAR MANTIĞI
+    # D. 🧠 ML HAVA TAHMİNİ DOĞRULAMA
+    ml_tahmin = None
+    ml_override = False
+    ml_strateji = None
+    try:
+        from ml.predictor import predict_rain
+        ml_result = predict_rain(field_id, {
+            "moisture": last_log.moisture,
+            "temperature": last_log.temperature,
+        })
+        ml_tahmin = ml_result
+    except Exception:
+        ml_tahmin = {"mesaj": "ML modeli henüz eğitilmedi. POST /prediction/train-all çağırın."}
+    
+    # E. 🧠 AKILLI KARAR MANTIĞI (ML destekli savunmacı sulama)
     karar = {
         "durum": "IDEAL",
         "aksiyon": "Sulama gerekmiyor",
@@ -118,61 +132,152 @@ def check_irrigation_status(field_id: int, db: Session = Depends(get_db)):
         "pompa": "KAPALI"
     }
     
-    # SENARYO 1: KRİTİK NEM - ACİL SULAMA (yağmur bile olsa!)
+    # ML'den gelen sulama kararı
+    ml_sulama_karari = ml_tahmin.get("sulama_karari", "") if isinstance(ml_tahmin, dict) else ""
+    
+    # SENARYO 1: KRİTİK NEM
     if mevcut_nem < kritik_nem:
-        karar = {
-            "durum": "KRİTİK",
-            "aksiyon": "ACİL SULAMA BAŞLATILDI",
-            "aciliyet": "ÇOK YÜKSEK",
-            "detay": f"Toprak nemi %{mevcut_nem} ile kritik sınırın (%{kritik_nem}) altında! "
-                     f"Yağmur beklense bile bitki zarar görebilir, acil sulama yapılıyor.",
-            "pompa": "AÇIK"
-        }
+        # Yağmur tahmini var ve ML güvenmiyorsa → sadece minimum'a sula (savunmacı)
+        if (yagis_1_saat or yagis_3_saat or yagis_6_saat) and ml_sulama_karari == "GUVENME_SULA":
+            karar = {
+                "durum": "KRİTİK_SAVUNMACI",
+                "aksiyon": "Minimum seviyeye sulama yapılıyor",
+                "aciliyet": "YÜKSEK",
+                "detay": f"Toprak nemi %{mevcut_nem} kritik! Hava tahmini yağmur diyor ama "
+                         f"ML modeline göre bu tarlaya geçmişte yağmur gelmemiş. "
+                         f"Bitki korunması için sadece minimum seviyeye (%{min_nem}) sulanıyor. "
+                         f"Yağmur gelirse fazla su harcanmamış olur.",
+                "pompa": "MİNİMUM_DOZ",
+                "sulama_hedef_nem": min_nem
+            }
+            ml_override = True
+            ml_strateji = "SAVUNMACI"
+        else:
+            # ML güveniyorsa ya da yağmur yoksa → normal acil sulama
+            karar = {
+                "durum": "KRİTİK",
+                "aksiyon": "ACİL SULAMA BAŞLATILDI",
+                "aciliyet": "ÇOK YÜKSEK",
+                "detay": f"Toprak nemi %{mevcut_nem} ile kritik sınırın (%{kritik_nem}) altında! "
+                         f"Yağmur beklense bile bitki zarar görebilir, acil sulama yapılıyor.",
+                "pompa": "AÇIK"
+            }
     
     # SENARYO 2: DÜŞÜK NEM (min_moisture altında)
     elif mevcut_nem < min_nem:
-        # 2a: 1 saat içinde yağmur var mı?
-        if yagis_1_saat:
-            karar = {
-                "durum": "SULAMA ERTELENDİ",
-                "aksiyon": "1 saat bekle, yağmur geliyor",
-                "aciliyet": "DÜŞÜK",
-                "detay": f"Toprak kuru (%{mevcut_nem}) ama 1 saat içinde yağış bekleniyor. "
-                         f"Doğal sulama için bekleniyor, su tasarrufu sağlanıyor.",
-                "pompa": "KAPALI"
-            }
-        # 2b: 3 saat içinde yağmur var mı? (Bitki dayanabilir mi kontrol)
-        elif yagis_3_saat and mevcut_nem > kritik_nem + 5:
-            ilk_yagis_saat = ilk_yagis["kac_saat_sonra"] if ilk_yagis else "?"
-            karar = {
-                "durum": "SULAMA ERTELENDİ",
-                "aksiyon": f"{ilk_yagis_saat} saat sonra yağmur bekleniyor",
-                "aciliyet": "ORTA",
-                "detay": f"Toprak kuru (%{mevcut_nem}) ama {ilk_yagis_saat} saat içinde yağış var. "
-                         f"Bitki bu süre dayanabilir, yağmur beklenecek.",
-                "pompa": "KAPALI"
-            }
-        # 2c: 6 saat içinde yağmur var ve nem çok kritik değil
-        elif yagis_6_saat and mevcut_nem > kritik_nem + 10:
-            ilk_yagis_saat = ilk_yagis["kac_saat_sonra"] if ilk_yagis else "?"
-            karar = {
-                "durum": "KISMI SULAMA ÖNERİLİR",
-                "aksiyon": f"Hafif sulama yap, {ilk_yagis_saat} saat sonra yağmur var",
-                "aciliyet": "ORTA", 
-                "detay": f"Toprak kuru (%{mevcut_nem}), yağmur {ilk_yagis_saat} saat sonra. "
-                         f"Yarım doz sulama yapılıp yağmura bırakılabilir.",
-                "pompa": "YARIM_DOZ"
-            }
-        # 2d: Yakın zamanda yağmur yok, sulama şart
+        yagmur_bekleniyor = yagis_1_saat or yagis_3_saat or yagis_6_saat
+        
+        # ML güvenmiyorsa → savunmacı mod: kritik'e düşene kadar bekle, düşünce minimum'a sula
+        if yagmur_bekleniyor and ml_sulama_karari == "GUVENME_SULA":
+            ml_override = True
+            ml_strateji = "SAVUNMACI"
+            ml_aciklama = ml_tahmin.get("karar_aciklama", "") if isinstance(ml_tahmin, dict) else ""
+            
+            if mevcut_nem <= kritik_nem + 3:  # Kritik sınıra çok yakın
+                karar = {
+                    "durum": "SAVUNMACI_SULAMA",
+                    "aksiyon": "Minimum seviyeye sulama yapılıyor",
+                    "aciliyet": "YÜKSEK",
+                    "detay": f"Toprak nemi %{mevcut_nem} kritik sınıra (%{kritik_nem}) çok yakın! "
+                             f"Hava tahmini yağmur diyor ama ML bu tarlaya güvenmiyor. "
+                             f"Bitki korunması için minimum seviyeye (%{min_nem}) sulanıyor, sonra durulacak. "
+                             f"Yağmur gelirse kurtuluruz, gelmezse tekrar sulanır.",
+                    "pompa": "MİNİMUM_DOZ",
+                    "sulama_hedef_nem": min_nem
+                }
+            else:
+                karar = {
+                    "durum": "SAVUNMACI_BEKLEME",
+                    "aksiyon": "Bekleniyor - kritik düşerse minimum sulanacak",
+                    "aciliyet": "ORTA",
+                    "detay": f"Toprak kuru (%{mevcut_nem}) ve yağmur tahmini var ama ML güvenmiyor. "
+                             f"Nem henüz kritik seviyeye (%{kritik_nem}) düşmedi. Bekleniyor. "
+                             f"Kritik sınıra düşerse sadece minimum seviyeye (%{min_nem}) sulanacak.",
+                    "pompa": "KAPALI"
+                }
+        
+        # ML güveniyorsa (GUVEN_BEKLE) → mevcut erteleme mantığı aynen
+        elif yagmur_bekleniyor and ml_sulama_karari == "GUVEN_BEKLE":
+            if yagis_1_saat:
+                karar = {
+                    "durum": "SULAMA ERTELENDİ",
+                    "aksiyon": "1 saat bekle, yağmur geliyor (ML onaylı)",
+                    "aciliyet": "DÜŞÜK",
+                    "detay": f"Toprak kuru (%{mevcut_nem}) ama 1 saat içinde yağış bekleniyor. "
+                             f"ML modeli de bu tarlada yağmurun gerçekleşeceğini doğruluyor. "
+                             f"Doğal sulama için bekleniyor.",
+                    "pompa": "KAPALI"
+                }
+            elif yagis_3_saat and mevcut_nem > kritik_nem + 5:
+                ilk_yagis_saat = ilk_yagis["kac_saat_sonra"] if ilk_yagis else "?"
+                karar = {
+                    "durum": "SULAMA ERTELENDİ",
+                    "aksiyon": f"{ilk_yagis_saat} saat sonra yağmur (ML onaylı)",
+                    "aciliyet": "ORTA",
+                    "detay": f"Toprak kuru (%{mevcut_nem}) ama {ilk_yagis_saat} saat içinde yağış var. "
+                             f"ML modeli bu tarlada yağmurun güvenilir olduğunu doğruluyor.",
+                    "pompa": "KAPALI"
+                }
+            elif yagis_6_saat and mevcut_nem > kritik_nem + 10:
+                ilk_yagis_saat = ilk_yagis["kac_saat_sonra"] if ilk_yagis else "?"
+                karar = {
+                    "durum": "KISMI SULAMA ÖNERİLİR",
+                    "aksiyon": f"Hafif sulama, {ilk_yagis_saat} saat sonra yağmur (ML onaylı)",
+                    "aciliyet": "ORTA",
+                    "detay": f"Toprak kuru (%{mevcut_nem}), yağmur {ilk_yagis_saat} saat sonra. "
+                             f"ML tahmine güveniyor, yarım doz sulama ile yağmura bırakılabilir.",
+                    "pompa": "YARIM_DOZ"
+                }
+            else:
+                karar = {
+                    "durum": "SULAMA GEREKLİ",
+                    "aksiyon": "Tam sulama başlatılıyor",
+                    "aciliyet": "YÜKSEK",
+                    "detay": f"Toprak kuru (%{mevcut_nem}) ve yağmur beklenmiyor. "
+                             f"Sulama pompası çalıştırılıyor.",
+                    "pompa": "AÇIK"
+                }
+        
+        # ML modeli yoksa veya yağmur yoksa → eski mantık
         else:
-            karar = {
-                "durum": "SULAMA GEREKLİ",
-                "aksiyon": "Tam sulama başlatılıyor",
-                "aciliyet": "YÜKSEK",
-                "detay": f"Toprak kuru (%{mevcut_nem}) ve önümüzdeki {max_bekleme} saat yağış beklenmiyor. "
-                         f"Sulama pompası çalıştırılıyor.",
-                "pompa": "AÇIK"
-            }
+            if yagis_1_saat:
+                karar = {
+                    "durum": "SULAMA ERTELENDİ",
+                    "aksiyon": "1 saat bekle, yağmur geliyor",
+                    "aciliyet": "DÜŞÜK",
+                    "detay": f"Toprak kuru (%{mevcut_nem}) ama 1 saat içinde yağış bekleniyor. "
+                             f"Doğal sulama için bekleniyor, su tasarrufu sağlanıyor.",
+                    "pompa": "KAPALI"
+                }
+            elif yagis_3_saat and mevcut_nem > kritik_nem + 5:
+                ilk_yagis_saat = ilk_yagis["kac_saat_sonra"] if ilk_yagis else "?"
+                karar = {
+                    "durum": "SULAMA ERTELENDİ",
+                    "aksiyon": f"{ilk_yagis_saat} saat sonra yağmur bekleniyor",
+                    "aciliyet": "ORTA",
+                    "detay": f"Toprak kuru (%{mevcut_nem}) ama {ilk_yagis_saat} saat içinde yağış var. "
+                             f"Bitki bu süre dayanabilir, yağmur beklenecek.",
+                    "pompa": "KAPALI"
+                }
+            elif yagis_6_saat and mevcut_nem > kritik_nem + 10:
+                ilk_yagis_saat = ilk_yagis["kac_saat_sonra"] if ilk_yagis else "?"
+                karar = {
+                    "durum": "KISMI SULAMA ÖNERİLİR",
+                    "aksiyon": f"Hafif sulama yap, {ilk_yagis_saat} saat sonra yağmur var",
+                    "aciliyet": "ORTA",
+                    "detay": f"Toprak kuru (%{mevcut_nem}), yağmur {ilk_yagis_saat} saat sonra. "
+                             f"Yarım doz sulama yapılıp yağmura bırakılabilir.",
+                    "pompa": "YARIM_DOZ"
+                }
+            else:
+                karar = {
+                    "durum": "SULAMA GEREKLİ",
+                    "aksiyon": "Tam sulama başlatılıyor",
+                    "aciliyet": "YÜKSEK",
+                    "detay": f"Toprak kuru (%{mevcut_nem}) ve önümüzdeki {max_bekleme} saat yağış beklenmiyor. "
+                             f"Sulama pompası çalıştırılıyor.",
+                    "pompa": "AÇIK"
+                }
     
     # SENARYO 3: AŞIRI NEM
     elif mevcut_nem > max_nem:
@@ -195,7 +300,7 @@ def check_irrigation_status(field_id: int, db: Session = Depends(get_db)):
             "pompa": "KAPALI"
         }
     
-    # E. SONUÇ RAPORU
+    # F. SONUÇ RAPORU
     return {
         "tarla": {
             "id": field.id,
@@ -224,6 +329,9 @@ def check_irrigation_status(field_id: int, db: Session = Depends(get_db)):
             "onumuzdeki_12_saat": saatlik
         },
         "karar": karar,
+        "ml_tahmin": ml_tahmin,
+        "ml_override": ml_override,
+        "ml_strateji": ml_strateji,
         "zaman_damgasi": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     }
 
