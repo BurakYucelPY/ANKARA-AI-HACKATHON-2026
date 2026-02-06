@@ -19,6 +19,9 @@ export const getFields = (userId) =>
 export const createField = (userId, fieldData) =>
   API.post(`/users/${userId}/fields/`, fieldData);
 
+export const updateFieldPlantType = (userId, fieldId, plantTypeId) =>
+  API.put(`/users/${userId}/fields/${fieldId}/plant-type`, { plant_type_id: plantTypeId });
+
 // ========== PLANT TYPES ==========
 export const getPlantTypes = () =>
   API.get('/plant-types/');

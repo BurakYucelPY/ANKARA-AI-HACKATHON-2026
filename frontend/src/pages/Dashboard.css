@@ -22,45 +22,83 @@
    TOPLAM KAR - HERO BÖLÜMÜ
    =================================== */
 
-.profit-hero {
-    background: linear-gradient(135deg,
-            rgba(34, 197, 94, 0.15) 0%,
-            rgba(14, 165, 233, 0.1) 50%,
-            rgba(34, 197, 94, 0.15) 100%);
-    border: 1px solid rgba(34, 197, 94, 0.3);
-    border-radius: var(--radius-2xl);
-    padding: var(--space-10) var(--space-8);
+/* Heroes Row - Yan Yana */
+.heroes-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
     margin-bottom: var(--space-8);
+}
+
+.profit-hero {
+    padding: var(--space-8) var(--space-6);
     text-align: center;
     position: relative;
     overflow: hidden;
 }
 
 .profit-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: var(--gradient-primary);
+    display: none;
 }
 
 .profit-hero::after {
-    content: '';
-    position: absolute;
-    bottom: -50%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    height: 100%;
-    background: radial-gradient(ellipse at center, rgba(34, 197, 94, 0.2) 0%, transparent 70%);
-    pointer-events: none;
+    display: none;
 }
 
 .profit-hero-content {
     position: relative;
     z-index: 1;
+}
+
+/* Kazanılan Su - Hero */
+.water-hero {
+    padding: var(--space-8) var(--space-6);
+    text-align: center;
+}
+
+.water-hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.water-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    color: var(--gray-300);
+    font-size: 1rem;
+    margin-bottom: var(--space-3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.water-icon {
+    font-size: 1.5rem;
+}
+
+.water-amount {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--space-3);
+}
+
+.water-amount .amount {
+    font-size: 5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 50%, #0284c7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(14, 165, 233, 0.3));
+    line-height: 1;
+}
+
+.water-amount .unit {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--gray-400);
 }
 
 .profit-label {
@@ -96,7 +134,7 @@
 .profit-amount .amount {
     font-size: 5rem;
     font-weight: 800;
-    background: var(--gradient-primary);
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -531,6 +569,10 @@
     }
 
     .dashboard-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .heroes-row {
         grid-template-columns: 1fr;
     }
 }

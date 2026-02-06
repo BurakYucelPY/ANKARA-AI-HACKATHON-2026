@@ -118,21 +118,46 @@ const ManualControl = () => {
                 <Card title="Sulama Kontrolü" icon="💧" className="control-panel">
                     <div className="control-form">
                         <div className="form-group">
-                            <label htmlFor="field-select">Tarla Seçin</label>
-                            <select
-                                id="field-select"
-                                className="select"
-                                value={selectedField}
-                                onChange={(e) => setSelectedField(e.target.value)}
-                                disabled={isWatering}
-                            >
-                                <option value="">-- Tarla Seçin --</option>
-                                {fields.map((field) => (
-                                    <option key={field.id} value={field.id}>
-                                        {field.name} {field.moisture !== '-' ? `(Nem: %${field.moisture})` : '(Veri yok)'}
-                                    </option>
-                                ))}
-                            </select>
+                            <label>Tarla Seçin</label>
+                            <div className="field-selector">
+                                {fields.map((field) => {
+                                    const isSelected = selectedField === String(field.id);
+                                    const statusEmoji = field.status === 'optimal' ? '🟢' : field.status === 'normal' ? '🔵' : field.status === 'warning' ? '🟡' : '🔴';
+                                    return (
+                                        <button
+                                            key={field.id}
+                                            type="button"
+                                            className={`field-selector-item ${isSelected ? 'selected' : ''} ${field.status}`}
+                                            onClick={() => !isWatering && setSelectedField(String(field.id))}
+                                            disabled={isWatering}
+                                        >
+                                            <div className="field-selector-top">
+                                                <span className="field-selector-name">{field.name}</span>
+                                                <span className="field-selector-status">{statusEmoji}</span>
+                                            </div>
+                                            <div className="field-selector-moisture">
+                                                {field.moisture !== '-' ? (
+                                                    <>
+                                                        <div className="field-selector-bar">
+                                                            <div
+                                                                className="field-selector-bar-fill"
+                                                                style={{
+                                                                    width: `${field.moisture}%`,
+                                                                    background: field.moisture >= 60 ? 'var(--success)' : field.moisture >= 40 ? 'var(--warning)' : 'var(--danger)'
+                                                                }}
+                                                            />
+                                                        </div>
+                                                        <span className="field-selector-value">%{field.moisture}</span>
+                                                    </>
+                                                ) : (
+                                                    <span className="field-selector-nodata">Veri yok</span>
+                                                )}
+                                            </div>
+                                            {isSelected && <div className="field-selector-check">✓</div>}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
 
                         <div className="form-group">

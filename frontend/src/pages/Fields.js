@@ -1,20 +1,16 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getFields, createField, getPlantTypes, getIlceler } from '../services/api';
+import { getFields } from '../services/api';
 import { getPlantImage } from '../data/plantImages';
 import Card from '../components/Card';
 import './Fields.css';
 
 const Fields = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [fields, setFields] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [plantTypes, setPlantTypes] = useState([]);
-    const [ilceler, setIlceler] = useState({});
-    const [newField, setNewField] = useState({ name: '', location: '', ilce: '', plant_type_id: '', pump_flow_rate: 100, water_unit_price: 1.5 });
-    const [submitting, setSubmitting] = useState(false);
-    const [addError, setAddError] = useState('');
 
     const fetchFields = async () => {
         try {
@@ -30,41 +26,6 @@ const Fields = () => {
     useEffect(() => {
         fetchFields(); // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user.id]);
-
-    const openAddModal = async () => {
-        setShowAddModal(true);
-        setAddError('');
-        try {
-            const [ptRes, ilceRes] = await Promise.all([getPlantTypes(), getIlceler()]);
-            setPlantTypes(ptRes.data);
-            setIlceler(ilceRes.data.iller || ilceRes.data);
-        } catch (err) {
-            console.error('Form verileri yüklenemedi:', err);
-        }
-    };
-
-    const handleAddField = async (e) => {
-        e.preventDefault();
-        setAddError('');
-        setSubmitting(true);
-        try {
-            await createField(user.id, {
-                name: newField.name,
-                location: newField.location,
-                ilce: newField.ilce,
-                plant_type_id: parseInt(newField.plant_type_id),
-                pump_flow_rate: parseFloat(newField.pump_flow_rate),
-                water_unit_price: parseFloat(newField.water_unit_price),
-            });
-            setShowAddModal(false);
-            setNewField({ name: '', location: '', ilce: '', plant_type_id: '', pump_flow_rate: 100, water_unit_price: 1.5 });
-            await fetchFields();
-        } catch (err) {
-            setAddError(err.response?.data?.detail || 'Tarla eklenirken hata oluştu');
-        } finally {
-            setSubmitting(false);
-        }
-    };
 
     // Tarlanın durumunu sensör verisinden hesapla
     const getFieldStatus = (field) => {
@@ -147,9 +108,6 @@ const Fields = () => {
                     <h1 className="page-title">🌾 Tarlalarım</h1>
                     <p className="page-subtitle">Tarlalarınızın durumunu ve sensör verilerini takip edin</p>
                 </div>
-                <button className="btn btn-primary" onClick={openAddModal}>
-                    <span>➕</span> Yeni Tarla Ekle
-                </button>
             </div>
 
             {/* Özet Bilgiler */}
@@ -196,11 +154,8 @@ const Fields = () => {
                             <div
                                 key={field.id}
                                 className={`field-card field-${field.status}`}
-                                style={{
-                                    backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url(${plantImage.image})`,
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center'
-                                }}
+                                onClick={() => navigate(`/fields/${field.id}`)}
+                                style={{ cursor: 'pointer' }}
                             >
                                 <div className="field-header">
                                     <div className="field-info">
@@ -210,11 +165,14 @@ const Fields = () => {
                                     <span className={`badge ${statusBadge.class}`}>{statusBadge.label}</span>
                                 </div>
 
-                                <div className="field-plant">
-                                    <span
-                                        className="plant-color-dot"
-                                        style={{ backgroundColor: plantImage.color }}
-                                    ></span>
+                                <div
+                                    className="field-plant"
+                                    style={{
+                                        backgroundImage: `linear-gradient(90deg, rgba(15, 23, 42, 0.7) 0%, rgba(15, 23, 42, 0.5) 100%), url(${plantImage.image})`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center'
+                                    }}
+                                >
                                     <span className="plant-name">{field.plant_type?.name || 'Bilinmiyor'}</span>
                                 </div>
 
@@ -256,92 +214,6 @@ const Fields = () => {
                             </div>
                         );
                     })}
-                </div>
-            )}
-
-            {/* Yeni Tarla Ekleme Modalı */}
-            {showAddModal && (
-                <div className="plant-modal-overlay" onClick={() => setShowAddModal(false)}>
-                    <div className="plant-modal" onClick={(e) => e.stopPropagation()}>
-                        <button className="modal-close" onClick={() => setShowAddModal(false)}>✕</button>
-                        <div className="modal-header">
-                            <span className="modal-icon">🌾</span>
-                            <div className="modal-title-section">
-                                <h2>Yeni Tarla Ekle</h2>
-                            </div>
-                        </div>
-                        <div className="modal-content">
-                            <form onSubmit={handleAddField}>
-                                <div className="info-grid">
-                                    <div className="info-card full-width">
-                                        <div className="info-details" style={{ width: '100%' }}>
-                                            <label className="info-label">Tarla Adı</label>
-                                            <input className="input" type="text" required value={newField.name}
-                                                onChange={e => setNewField({ ...newField, name: e.target.value })}
-                                                placeholder="Örn: Buğday Tarlası" />
-                                        </div>
-                                    </div>
-                                    <div className="info-card">
-                                        <div className="info-details" style={{ width: '100%' }}>
-                                            <label className="info-label">Konum</label>
-                                            <input className="input" type="text" required value={newField.location}
-                                                onChange={e => setNewField({ ...newField, location: e.target.value })}
-                                                placeholder="Örn: Ankara" />
-                                        </div>
-                                    </div>
-                                    <div className="info-card">
-                                        <div className="info-details" style={{ width: '100%' }}>
-                                            <label className="info-label">İlçe</label>
-                                            <select className="input" required value={newField.ilce}
-                                                onChange={e => setNewField({ ...newField, ilce: e.target.value })}>
-                                                <option value="">İlçe seçin</option>
-                                                {Object.entries(ilceler).map(([il, ilcelerList]) => (
-                                                    <optgroup key={il} label={il}>
-                                                        {(Array.isArray(ilcelerList) ? ilcelerList : Object.keys(ilcelerList)).map(ilce => (
-                                                            <option key={typeof ilce === 'string' ? ilce : ilce} value={typeof ilce === 'string' ? ilce : ilce}>
-                                                                {typeof ilce === 'string' ? ilce : ilce}
-                                                            </option>
-                                                        ))}
-                                                    </optgroup>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="info-card full-width">
-                                        <div className="info-details" style={{ width: '100%' }}>
-                                            <label className="info-label">Bitki Türü</label>
-                                            <select className="input" required value={newField.plant_type_id}
-                                                onChange={e => setNewField({ ...newField, plant_type_id: e.target.value })}>
-                                                <option value="">Bitki türü seçin</option>
-                                                {plantTypes.map(pt => (
-                                                    <option key={pt.id} value={pt.id}>{pt.name}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="info-card">
-                                        <div className="info-details" style={{ width: '100%' }}>
-                                            <label className="info-label">Pompa Debisi (L/dk)</label>
-                                            <input className="input" type="number" step="0.1" value={newField.pump_flow_rate}
-                                                onChange={e => setNewField({ ...newField, pump_flow_rate: e.target.value })} />
-                                        </div>
-                                    </div>
-                                    <div className="info-card">
-                                        <div className="info-details" style={{ width: '100%' }}>
-                                            <label className="info-label">Su Birim Fiyatı (₺/L)</label>
-                                            <input className="input" type="number" step="0.01" value={newField.water_unit_price}
-                                                onChange={e => setNewField({ ...newField, water_unit_price: e.target.value })} />
-                                        </div>
-                                    </div>
-                                </div>
-                                {addError && <div style={{ color: '#f44336', textAlign: 'center', margin: '1rem 0', fontSize: '0.9rem' }}>{addError}</div>}
-                                <button type="submit" className="btn btn-primary" disabled={submitting}
-                                    style={{ width: '100%', marginTop: '1.5rem', padding: '0.85rem' }}>
-                                    {submitting ? 'Ekleniyor...' : '✅ Tarla Ekle'}
-                                </button>
-                            </form>
-                        </div>
-                    </div>
                 </div>
             )}
         </div>

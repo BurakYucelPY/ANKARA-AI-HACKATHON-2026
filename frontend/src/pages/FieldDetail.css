@@ -1,0 +1,467 @@
+/* ===========================
+   FieldDetail — Tarla Detay
+   =========================== */
+
+.field-detail-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* — Başlık Bölümü — */
+.detail-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.detail-back-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--gray-300);
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.detail-back-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--gray-100);
+}
+
+.detail-title-section {
+    flex: 1;
+    min-width: 0;
+}
+.detail-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--gray-100);
+    margin: 0;
+    line-height: 1.2;
+}
+.detail-subtitle {
+    color: var(--gray-400);
+    font-size: 0.9rem;
+    margin: 0.25rem 0 0 0;
+}
+
+/* — Bitki Banner — */
+.detail-plant-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-radius: 1rem;
+    padding: 1.5rem 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 120px;
+    background-color: var(--card-bg);
+}
+
+.detail-plant-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.detail-plant-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray-400);
+    font-weight: 600;
+}
+.detail-plant-name {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.detail-change-plant-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 0.55rem 1.1rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    white-space: nowrap;
+    backdrop-filter: blur(4px);
+}
+.detail-change-plant-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(-1px);
+}
+
+/* — Başarı Mesajı — */
+.detail-success-msg {
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    color: var(--success);
+    padding: 0.85rem 1.25rem;
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+}
+
+/* — Bitki Değiştirme Paneli — */
+.detail-change-panel {
+    animation: slideDown 0.3s ease;
+}
+
+.change-panel-header h3 {
+    font-size: 1.15rem;
+    color: var(--warning);
+    margin: 0 0 0.5rem 0;
+}
+.change-warning {
+    color: var(--gray-400);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin: 0 0 1.25rem 0;
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.15);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+}
+
+.plant-type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
+}
+
+.plant-type-option {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    min-height: 90px;
+    border-radius: 0.75rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.25s;
+    padding: 0.75rem 0.5rem;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background-color: var(--card-bg);
+}
+.plant-type-option:hover:not(.current):not(:disabled) {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+}
+.plant-type-option.current {
+    border-color: var(--success);
+    opacity: 0.5;
+    cursor: default;
+}
+
+.plant-type-name {
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+.plant-type-current-badge {
+    display: inline-block;
+    background: var(--success);
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+    z-index: 1;
+}
+
+.change-error {
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 0.75rem;
+    text-align: center;
+}
+
+/* — Şifre Onay Modalı — */
+.password-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+    animation: fadeIn 0.2s ease;
+}
+
+.password-modal {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    animation: modalPop 0.3s ease;
+}
+
+.password-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+.password-modal-icon {
+    font-size: 1.75rem;
+}
+.password-modal-header h3 {
+    color: var(--gray-100);
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.password-modal-warning {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 0.75rem;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.25rem;
+}
+.password-modal-warning p {
+    color: var(--gray-300);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin: 0;
+}
+.password-modal-warning p + p {
+    margin-top: 0.35rem;
+}
+.password-modal-warning strong {
+    color: var(--warning);
+}
+
+.password-input-group {
+    margin-bottom: 1rem;
+}
+.password-input-group label {
+    display: block;
+    color: var(--gray-400);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+.password-input-group .input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.75rem;
+    color: var(--gray-100);
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+.password-input-group .input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+.password-input-group .input::placeholder {
+    color: var(--gray-500);
+}
+
+.password-modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+}
+.password-modal-actions .btn {
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+.password-modal-actions .btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--gray-300);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.password-modal-actions .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+.password-modal-actions .btn-danger {
+    background: linear-gradient(135deg, var(--danger), #b91c1c);
+    color: #fff;
+}
+.password-modal-actions .btn-danger:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+.password-modal-actions .btn-danger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* — Sensör Grid — */
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+}
+
+.detail-sensor-card {
+    display: flex;
+    flex-direction: column;
+}
+.detail-card-title {
+    font-size: 0.9rem;
+    color: var(--gray-400);
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+}
+
+.detail-sensor-big {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.detail-big-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.detail-progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+.detail-progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.6s ease;
+}
+
+.detail-thresholds {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+
+.detail-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+.detail-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.detail-info-label {
+    color: var(--gray-400);
+    font-size: 0.85rem;
+}
+.detail-info-value {
+    color: var(--gray-200);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* — Badge — */
+.badge {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+.badge-success {
+    background: rgba(74, 222, 128, 0.15);
+    color: var(--success);
+}
+.badge-info {
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--info);
+}
+.badge-warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning);
+}
+.badge-danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+}
+
+/* — Animasyonlar — */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes modalPop {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* — Responsive — */
+@media (max-width: 900px) {
+    .detail-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .detail-title {
+        font-size: 1.35rem;
+    }
+    .detail-plant-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.25rem;
+    }
+    .detail-plant-name {
+        font-size: 1.5rem;
+    }
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+    .plant-type-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    }
+    .password-modal {
+        padding: 1.25rem;
+    }
+    .detail-big-value {
+        font-size: 2rem;
+    }
+}

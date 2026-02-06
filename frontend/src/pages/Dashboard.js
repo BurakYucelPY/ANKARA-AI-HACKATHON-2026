@@ -92,24 +92,6 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard">
-            {/* Toplam Kar - Ana Vurgu */}
-            <div className="profit-hero">
-                <div className="profit-hero-content">
-                    <div className="profit-label">
-                        <span className="profit-icon">💰</span>
-                        <span>Toplam Kar</span>
-                    </div>
-                    <div className="profit-amount">
-                        <span className="currency">₺</span>
-                        <span className="amount">{formatMoney(systemStats.totalProfit)}</span>
-                    </div>
-                    <p className="profit-subtitle">
-                        🌱 {systemStats.startDate} tarihinden beri • {systemStats.daysActive} gün aktif
-                        {fieldsData.length > 0 && ` • ${fieldsData.length} tarla`}
-                    </p>
-                </div>
-            </div>
-
             {/* Header */}
             <div className="dashboard-header">
                 <div className="dashboard-welcome">
@@ -125,6 +107,39 @@ const Dashboard = () => {
                         month: 'long',
                         day: 'numeric'
                     })}
+                </div>
+            </div>
+
+            {/* Toplam Kazanç & Su - Yan Yana */}
+            <div className="heroes-row">
+                <div className="profit-hero">
+                    <div className="profit-hero-content">
+                        <div className="profit-label">
+                            <span className="profit-icon">💰</span>
+                            <span>Toplam Kar</span>
+                        </div>
+                        <div className="profit-amount">
+                            <span className="currency">₺</span>
+                            <span className="amount">{formatMoney(systemStats.totalProfit)}</span>
+                        </div>
+                        <p className="profit-subtitle">
+                            🌱 {systemStats.startDate} tarihinden beri • {systemStats.daysActive} gün aktif
+                            {fieldsData.length > 0 && ` • ${fieldsData.length} tarla`}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="water-hero">
+                    <div className="water-hero-content">
+                        <div className="water-label">
+                            <span className="water-icon">💧</span>
+                            <span>Kazanılan Su</span>
+                        </div>
+                        <div className="water-amount">
+                            <span className="amount">{formatLiters(systemStats.totalWaterSaved)}</span>
+                            <span className="unit">Litre</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -191,20 +206,6 @@ const Dashboard = () => {
                         )}
                     </div>
                 </Card>
-            </div>
-
-            {/* Küçük İstatistikler */}
-            <div className="dashboard-mini-stats">
-                <div className="mini-stat">
-                    <span className="mini-stat-icon">💧</span>
-                    <span className="mini-stat-value">{formatLiters(systemStats.totalWaterSaved)} L</span>
-                    <span className="mini-stat-label">Kazanılan Su</span>
-                </div>
-                <div className="mini-stat">
-                    <span className="mini-stat-icon">📅</span>
-                    <span className="mini-stat-value">{systemStats.daysActive}</span>
-                    <span className="mini-stat-label">Gün Aktif</span>
-                </div>
             </div>
 
             {/* Son Aktiviteler */}

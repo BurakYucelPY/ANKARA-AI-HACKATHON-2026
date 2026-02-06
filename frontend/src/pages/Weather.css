@@ -19,13 +19,83 @@
 }
 
 .weather-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: var(--gradient-primary);
+    display: none;
+}
+
+/* =====================
+   HAVA DURUMU KART ARKAPLAN RENKLERİ
+   ===================== */
+
+/* ☀️ Açık hava - Mavi gökyüzü */
+.weather-sunny.weather-card {
+    background: linear-gradient(145deg,
+            rgba(14, 85, 164, 0.65) 0%,
+            rgba(56, 152, 236, 0.45) 50%,
+            rgba(14, 85, 164, 0.6) 100%) !important;
+    border-color: rgba(56, 152, 236, 0.25);
+}
+
+/* 🌤️ Az bulutlu - Açık mavi + hafif beyaz */
+.weather-few-clouds.weather-card {
+    background: linear-gradient(145deg,
+            rgba(14, 85, 164, 0.55) 0%,
+            rgba(71, 145, 209, 0.4) 50%,
+            rgba(100, 160, 210, 0.45) 100%) !important;
+    border-color: rgba(71, 145, 209, 0.25);
+}
+
+/* ⛅ Parçalı bulutlu - Gri-mavi karışık */
+.weather-partly-cloudy.weather-card {
+    background: linear-gradient(145deg,
+            rgba(55, 75, 100, 0.65) 0%,
+            rgba(80, 105, 135, 0.5) 50%,
+            rgba(55, 75, 100, 0.6) 100%) !important;
+    border-color: rgba(100, 130, 165, 0.2);
+}
+
+/* ☁️ Kapalı - Koyu gri */
+.weather-cloudy.weather-card {
+    background: linear-gradient(145deg,
+            rgba(50, 55, 65, 0.75) 0%,
+            rgba(65, 72, 85, 0.6) 50%,
+            rgba(45, 50, 60, 0.7) 100%) !important;
+    border-color: rgba(100, 110, 125, 0.2);
+}
+
+/* 🌫️ Sis - Beyazımsı gri, soluk */
+.weather-fog.weather-card {
+    background: linear-gradient(145deg,
+            rgba(75, 85, 95, 0.6) 0%,
+            rgba(100, 110, 120, 0.5) 50%,
+            rgba(85, 95, 105, 0.55) 100%) !important;
+    border-color: rgba(150, 160, 170, 0.2);
+}
+
+/* 🌧️ Yağmur - Koyu gri-mavi */
+.weather-rain.weather-card {
+    background: linear-gradient(145deg,
+            rgba(30, 40, 55, 0.8) 0%,
+            rgba(45, 55, 75, 0.65) 50%,
+            rgba(30, 40, 55, 0.75) 100%) !important;
+    border-color: rgba(70, 90, 120, 0.25);
+}
+
+/* ❄️ Kar - Soğuk beyaz-mavi */
+.weather-snow.weather-card {
+    background: linear-gradient(145deg,
+            rgba(60, 80, 110, 0.6) 0%,
+            rgba(90, 110, 140, 0.5) 50%,
+            rgba(70, 90, 120, 0.55) 100%) !important;
+    border-color: rgba(140, 170, 210, 0.25);
+}
+
+/* ⛈️ Fırtına - Çok koyu dramatik */
+.weather-storm.weather-card {
+    background: linear-gradient(145deg,
+            rgba(20, 22, 35, 0.85) 0%,
+            rgba(35, 30, 50, 0.7) 50%,
+            rgba(20, 22, 35, 0.8) 100%) !important;
+    border-color: rgba(80, 70, 110, 0.25);
 }
 
 .weather-header {
@@ -354,35 +424,32 @@
 .weather-sunny .weather-animation-layer::before {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 100px;
-    height: 100px;
-    background: radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, transparent 70%);
+    top: 10%;
+    right: 10%;
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.45) 0%, transparent 70%);
     border-radius: 50%;
-    animation: sunPulse 3s ease-in-out infinite;
+    animation: sunPulse 4s ease-in-out infinite;
 }
 
 .weather-sunny .weather-animation-layer::after {
     content: '';
     position: absolute;
-    top: -30%;
-    right: -30%;
-    width: 80px;
-    height: 80px;
-    background: radial-gradient(circle, rgba(251, 191, 36, 0.6) 0%, transparent 60%);
+    top: 5%;
+    right: 5%;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(253, 224, 71, 0.2) 0%, transparent 65%);
     border-radius: 50%;
-    animation: sunPulse 3s ease-in-out infinite 0.5s;
+    animation: sunPulse 4s ease-in-out infinite 1s;
 }
 
 @keyframes sunPulse {
-
-    0%,
-    100% {
+    0%, 100% {
         transform: scale(1);
         opacity: 0.6;
     }
-
     50% {
         transform: scale(1.3);
         opacity: 1;
