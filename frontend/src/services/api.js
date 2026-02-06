@@ -53,4 +53,11 @@ export const createSensorLog = (data) =>
 export const getSensors = (userId) =>
   API.get(`/sensors/user/${userId}`);
 
+// ========== CHATBOT ==========
+export const getChatbotFields = (userId) =>
+  API.get(`/chatbot/fields/${userId}`);
+
+export const sendChatbotMessage = (userId, fieldId, message, history = []) =>
+  API.post('/chatbot/message', { user_id: userId, field_id: fieldId, message, history });
+
 export default API;
