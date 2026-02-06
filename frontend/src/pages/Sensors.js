@@ -1,126 +1,50 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Card from '../components/Card';
+import { useAuth } from '../context/AuthContext';
+import { getSensors } from '../services/api';
 import './Sensors.css';
 
 /**
  * Sensors Sayfası - Sensörler
- * Sensör durumları ve sağlık kontrolü
+ * Sensör durumları ve sağlık kontrolü - Veritabanından çeker
  */
 const Sensors = () => {
+    const { user } = useAuth();
     const [filterStatus, setFilterStatus] = useState('all');
+    const [sensors, setSensors] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const sensors = [
-        {
-            id: 'SNS-001',
-            name: 'Nem Sensörü #1',
-            type: 'moisture',
-            typeLabel: 'Nem',
-            location: 'Buğday Tarlası',
-            status: 'active',
-            battery: 85,
-            lastData: '2 dakika önce',
-            value: '68%',
-        },
-        {
-            id: 'SNS-002',
-            name: 'Sıcaklık Sensörü #1',
-            type: 'temperature',
-            typeLabel: 'Sıcaklık',
-            location: 'Buğday Tarlası',
-            status: 'active',
-            battery: 92,
-            lastData: '1 dakika önce',
-            value: '24°C',
-        },
-        {
-            id: 'SNS-003',
-            name: 'Nem Sensörü #2',
-            type: 'moisture',
-            typeLabel: 'Nem',
-            location: 'Domates Serası',
-            status: 'active',
-            battery: 78,
-            lastData: '3 dakika önce',
-            value: '75%',
-        },
-        {
-            id: 'SNS-004',
-            name: 'Sıcaklık Sensörü #2',
-            type: 'temperature',
-            typeLabel: 'Sıcaklık',
-            location: 'Domates Serası',
-            status: 'maintenance',
-            battery: 45,
-            lastData: '1 saat önce',
-            value: '28°C',
-        },
-        {
-            id: 'SNS-005',
-            name: 'Nem Sensörü #3',
-            type: 'moisture',
-            typeLabel: 'Nem',
-            location: 'Mısır Tarlası',
-            status: 'warning',
-            battery: 25,
-            lastData: '5 dakika önce',
-            value: '35%',
-        },
-        {
-            id: 'SNS-006',
-            name: 'Hava Nem Sensörü',
-            type: 'humidity',
-            typeLabel: 'Hava Nemi',
-            location: 'Mısır Tarlası',
-            status: 'active',
-            battery: 88,
-            lastData: '2 dakika önce',
-            value: '40%',
-        },
-        {
-            id: 'SNS-007',
-            name: 'Nem Sensörü #4',
-            type: 'moisture',
-            typeLabel: 'Nem',
-            location: 'Biber Serası',
-            status: 'inactive',
-            battery: 0,
-            lastData: '3 gün önce',
-            value: '-',
-        },
-        {
-            id: 'SNS-008',
-            name: 'pH Sensörü',
-            type: 'ph',
-            typeLabel: 'pH',
-            location: 'Patates Tarlası',
-            status: 'active',
-            battery: 67,
-            lastData: '4 dakika önce',
-            value: '6.5',
-        },
-        {
-            id: 'SNS-009',
-            name: 'Işık Sensörü',
-            type: 'light',
-            typeLabel: 'Işık',
-            location: 'Domates Serası',
-            status: 'active',
-            battery: 95,
-            lastData: '30 saniye önce',
-            value: '850 lux',
-        },
-        {
-            id: 'SNS-010',
-            name: 'Rüzgar Sensörü',
-            type: 'wind',
-            typeLabel: 'Rüzgar',
-            location: 'Ayçiçeği Tarlası',
-            status: 'active',
-            battery: 72,
-            lastData: '1 dakika önce',
-            value: '12 km/h',
-        },
-    ];
+    useEffect(() => {
+        const fetchSensors = async () => {
+            if (!user?.id) return;
+            try {
+                setLoading(true);
+                const res = await getSensors(user.id);
+                setSensors(res.data);
+                setError(null);
+            } catch (err) {
+                console.error('Sensör verisi alınamadı:', err);
+                setError('Sensör verileri yüklenirken hata oluştu.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchSensors();
+    }, [user]);
+
+    // Zaman farkını hesapla (son veri zamanı)
+    const formatTimeAgo = (isoString) => {
+        if (!isoString) return 'Veri yok';
+        const diff = Date.now() - new Date(isoString).getTime();
+        const minutes = Math.floor(diff / 60000);
+        if (minutes < 1) return 'Az önce';
+        if (minutes < 60) return `${minutes} dakika önce`;
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours} saat önce`;
+        const days = Math.floor(hours / 24);
+        return `${days} gün önce`;
+    };
 
     const getStatusConfig = (status) => {
         const configs = {
@@ -136,10 +60,6 @@ const Sensors = () => {
         const icons = {
             moisture: '💧',
             temperature: '🌡️',
-            humidity: '💨',
-            ph: '🧪',
-            light: '☀️',
-            wind: '🌬️',
         };
         return icons[type] || '📡';
     };
@@ -161,6 +81,32 @@ const Sensors = () => {
         warning: sensors.filter(s => s.status === 'warning').length,
         maintenance: sensors.filter(s => s.status === 'maintenance').length,
     };
+
+    if (loading) {
+        return (
+            <div className="sensors-page">
+                <div className="page-header">
+                    <div className="page-header-content">
+                        <h1 className="page-title">📡 Sensörler</h1>
+                        <p className="page-subtitle">Yükleniyor...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="sensors-page">
+                <div className="page-header">
+                    <div className="page-header-content">
+                        <h1 className="page-title">📡 Sensörler</h1>
+                        <p className="page-subtitle" style={{ color: '#e74c3c' }}>{error}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="sensors-page">
@@ -240,9 +186,12 @@ const Sensors = () => {
                         <tbody>
                             {filteredSensors.map((sensor) => {
                                 const statusConfig = getStatusConfig(sensor.status);
+                                const displayValue = sensor.value != null
+                                    ? `${sensor.value}${sensor.unit}`
+                                    : '-';
                                 return (
                                     <tr key={sensor.id} className={statusConfig.class}>
-                                        <td className="sensor-id">{sensor.id}</td>
+                                        <td className="sensor-id">{sensor.sensor_code}</td>
                                         <td>
                                             <div className="sensor-name-cell">
                                                 <span className="sensor-type-icon">{getTypeIcon(sensor.type)}</span>
@@ -250,10 +199,10 @@ const Sensors = () => {
                                             </div>
                                         </td>
                                         <td>
-                                            <span className="type-badge">{sensor.typeLabel}</span>
+                                            <span className="type-badge">{sensor.type_label}</span>
                                         </td>
-                                        <td className="sensor-location">{sensor.location}</td>
-                                        <td className="sensor-value">{sensor.value}</td>
+                                        <td className="sensor-location">{sensor.field_name}</td>
+                                        <td className="sensor-value">{displayValue}</td>
                                         <td>
                                             <span className={`status-badge ${statusConfig.class}`}>
                                                 {statusConfig.icon} {statusConfig.label}
@@ -270,7 +219,7 @@ const Sensors = () => {
                                                 <span className="battery-text">{sensor.battery}%</span>
                                             </div>
                                         </td>
-                                        <td className="last-data">{sensor.lastData}</td>
+                                        <td className="last-data">{formatTimeAgo(sensor.last_data)}</td>
                                     </tr>
                                 );
                             })}
@@ -286,7 +235,7 @@ const Sensors = () => {
                         <span className="info-card-icon">✓</span>
                         <div className="info-card-text">
                             <h4>Sistem Sağlığı</h4>
-                            <p>Sensörlerin %{Math.round((statusCounts.active / statusCounts.all) * 100)}'ı aktif durumda</p>
+                            <p>Sensörlerin %{statusCounts.all > 0 ? Math.round((statusCounts.active / statusCounts.all) * 100) : 0}'ı aktif durumda</p>
                         </div>
                     </div>
                 </Card>

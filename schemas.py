@@ -65,6 +65,25 @@ class SensorLog(SensorLogBase):
     class Config:
         from_attributes = True
 
+# --- SENSOR CİHAZ ŞEMALARI ---
+class SensorBase(BaseModel):
+    sensor_code: str
+    name: str
+    type: str
+    status: str = "active"
+    battery: int = 100
+
+class SensorCreate(SensorBase):
+    field_id: int
+
+class Sensor(SensorBase):
+    id: int
+    field_id: int
+    installed_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+
 # 4. TARLA ŞEMALARI
 class FieldBase(BaseModel):
     name: str

@@ -73,6 +73,52 @@ for f in fields_data:
 print(f"✅ {len(created_fields)} tarla hazır")
 
 # ============================================================
+# 2.5 SENSÖR CİHAZLARI (Her tarla için 2 sensör: nem + sıcaklık)
+# ============================================================
+now = datetime.datetime.now()
+sensor_device_count = 0
+created_sensors = []
+
+for idx, field in enumerate(created_fields):
+    existing = db.query(models.Sensor).filter(models.Sensor.field_id == field.id).count()
+    if existing > 0:
+        sensor_device_count += existing
+        existing_sensors = db.query(models.Sensor).filter(models.Sensor.field_id == field.id).all()
+        created_sensors.extend(existing_sensors)
+        continue
+    
+    base_num = idx * 2 + 1  # SNS-001, SNS-002, ...
+    
+    # Nem sensörü
+    nem_sensor = models.Sensor(
+        sensor_code=f"SNS-{base_num:03d}",
+        name=f"Nem Sensörü #{idx + 1}",
+        type="moisture",
+        status=random.choice(["active", "active", "active", "active", "warning"]),  # %80 aktif
+        battery=random.randint(35, 100),
+        field_id=field.id,
+        installed_at=now - datetime.timedelta(days=random.randint(30, 365)),
+    )
+    db.add(nem_sensor)
+    
+    # Sıcaklık sensörü
+    sicaklik_sensor = models.Sensor(
+        sensor_code=f"SNS-{base_num + 1:03d}",
+        name=f"Sıcaklık Sensörü #{idx + 1}",
+        type="temperature",
+        status=random.choice(["active", "active", "active", "maintenance"]),  # %75 aktif
+        battery=random.randint(20, 100),
+        field_id=field.id,
+        installed_at=now - datetime.timedelta(days=random.randint(30, 365)),
+    )
+    db.add(sicaklik_sensor)
+    
+    sensor_device_count += 2
+
+db.commit()
+print(f"✅ {sensor_device_count} sensör cihazı hazır")
+
+# ============================================================
 # 3. SENSOR LOGLARI (Her tarla için son 7 gün, günde 4 ölçüm)
 # ============================================================
 now = datetime.datetime.now()

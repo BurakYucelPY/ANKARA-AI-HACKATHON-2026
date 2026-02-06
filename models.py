@@ -60,10 +60,26 @@ class Field(Base):
     owner = relationship("User", back_populates="fields")
     plant_type = relationship("PlantType", back_populates="fields")
     sensor_logs = relationship("SensorLog", back_populates="field")
+    sensors = relationship("Sensor", back_populates="field")
     irrigation_logs = relationship("IrrigationLog", back_populates="field")
     weather_forecasts = relationship("WeatherForecast", back_populates="field")
 
-# 4. SENSOR KAYITLARI
+# 4. SENSOR CIHAZLARI (Fiziksel sensörler)
+class Sensor(Base):
+    __tablename__ = "sensors"
+
+    id = Column(Integer, primary_key=True, index=True)
+    sensor_code = Column(String, unique=True, index=True)  # SNS-001
+    name = Column(String)  # Nem Sensörü #1
+    type = Column(String)  # moisture / temperature
+    status = Column(String, default="active")  # active / inactive / warning / maintenance
+    battery = Column(Integer, default=100)  # 0-100
+    field_id = Column(Integer, ForeignKey("fields.id"))
+    installed_at = Column(DateTime, default=datetime.datetime.now)
+
+    field = relationship("Field", back_populates="sensors")
+
+# 5. SENSOR KAYITLARI
 class SensorLog(Base):
     __tablename__ = "sensor_logs"
 

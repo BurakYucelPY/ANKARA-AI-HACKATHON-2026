@@ -6,6 +6,7 @@ import logging
 from database import engine, SessionLocal
 from routers import users, plants, simulation, weather
 from routers import prediction as prediction_router
+from routers import sensors as sensors_router
 from ml.predictor import predict_rain_from_db, get_all_models_status
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -93,6 +94,7 @@ app.include_router(plants.router)
 app.include_router(simulation.router)
 app.include_router(weather.router)
 app.include_router(prediction_router.router)
+app.include_router(sensors_router.router)
 
 @app.get("/")
 def ana_sayfa():
