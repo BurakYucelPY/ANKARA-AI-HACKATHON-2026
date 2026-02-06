@@ -401,6 +401,12 @@
     font-size: 0.9rem;
 }
 
+.next-note {
+    color: var(--gray-500);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
 /* ===================================
    İSTATİSTİKLER
    =================================== */

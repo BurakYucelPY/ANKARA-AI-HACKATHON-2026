@@ -7,7 +7,7 @@ import './IrrigationPlan.css';
    DEBUG / MOCK VERİLER
    Backend hazır olduğunda bu kısım API çağrısıyla değiştirilecek.
    ============================================================ */
-const MOCK_IRRIGATION_PLANS = {
+export const MOCK_IRRIGATION_PLANS = {
   // field_id bazlı haftalık planlar
   1: {
     fieldName: 'Tarla 1 — Domates',

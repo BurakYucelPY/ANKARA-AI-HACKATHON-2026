@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getFields, checkAllFields, getCurrentWeather } from '../services/api';
+import { MOCK_IRRIGATION_PLANS } from './IrrigationPlan';
 import Card from '../components/Card';
 import './Dashboard.css';
+
+const DAY_MAP = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
 
 const Dashboard = () => {
     const { user } = useAuth();
@@ -75,7 +78,49 @@ const Dashboard = () => {
     const formatMoney = (amount) => amount.toLocaleString('tr-TR');
     const formatLiters = (liters) => liters >= 1000 ? `${(liters / 1000).toFixed(1)}K` : liters.toString();
 
-    const { active: activeIrrigation, next: nextIrrigationData } = getIrrigationInfo();
+    const { active: activeIrrigation } = getIrrigationInfo();
+
+    // Sulama planından bir sonraki sulamayı bul
+    const nextPlannedIrrigation = useMemo(() => {
+        const now = new Date();
+        const todayIndex = now.getDay(); // 0=Pazar
+        const todayName = DAY_MAP[todayIndex];
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        // Tüm tarlaların tüm slotlarını gez, günlere göre sırala
+        const allSlots = [];
+        Object.entries(MOCK_IRRIGATION_PLANS).forEach(([fieldId, plan]) => {
+            plan.weeklyPlan.forEach((dayPlan) => {
+                dayPlan.slots.forEach((slot) => {
+                    allSlots.push({
+                        fieldId: Number(fieldId),
+                        fieldName: plan.fieldName,
+                        day: dayPlan.day,
+                        ...slot,
+                    });
+                });
+            });
+        });
+
+        // Gün sırasını bugünden başlat
+        const dayOrder = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
+        const todayDayIndex = dayOrder.indexOf(todayName);
+
+        // Bugünden başlayarak 7 gün ileriye bak
+        for (let offset = 0; offset < 7; offset++) {
+            const checkDay = dayOrder[(todayDayIndex + offset) % 7];
+            const daySlots = allSlots
+                .filter(s => s.day === checkDay)
+                .sort((a, b) => a.start.localeCompare(b.start));
+
+            for (const slot of daySlots) {
+                // Bugünse sadece gelecek saatleri al
+                if (offset === 0 && slot.start <= currentTime) continue;
+                return { ...slot, isToday: offset === 0, daysAway: offset };
+            }
+        }
+        return null;
+    }, []);
 
     if (loading) {
         return (
@@ -179,29 +224,30 @@ const Dashboard = () => {
                 <Card className="next-irrigation-card">
                     <div className="irrigation-status-header">
                         <span className="irrigation-icon">⏰</span>
-                        <h3>Sulama Analizi</h3>
+                        <h3>Sonraki Sulama</h3>
                     </div>
                     <div className="next-irrigation-content">
-                        {irrigationResults ? (
+                        {nextPlannedIrrigation ? (
                             <>
                                 <div className="next-irrigation-time">
-                                    <span className="next-date">{irrigationResults.toplam_tarla} Tarla</span>
-                                    <span className="next-time">Analiz Edildi</span>
+                                    <span className="next-date">
+                                        {nextPlannedIrrigation.isToday
+                                            ? 'Bugün'
+                                            : nextPlannedIrrigation.daysAway === 1
+                                                ? 'Yarın'
+                                                : nextPlannedIrrigation.day}
+                                    </span>
+                                    <span className="next-time">{nextPlannedIrrigation.start}</span>
                                 </div>
                                 <div className="next-irrigation-details">
-                                    {nextIrrigationData ? (
-                                        <>
-                                            <span className="next-field">📍 {nextIrrigationData.tarla_adi}</span>
-                                            <span className="next-duration">🔔 {nextIrrigationData.karar_ozeti}</span>
-                                        </>
-                                    ) : (
-                                        <span className="next-field">✅ Tüm tarlalar iyi durumda</span>
-                                    )}
+                                    <span className="next-field">📍 {nextPlannedIrrigation.fieldName}</span>
+                                    <span className="next-duration">💧 {nextPlannedIrrigation.amount}L • {nextPlannedIrrigation.start}–{nextPlannedIrrigation.end}</span>
+                                    <span className="next-note">{nextPlannedIrrigation.note}</span>
                                 </div>
                             </>
                         ) : (
                             <div className="next-irrigation-details">
-                                <span className="next-field">{fieldsData.length === 0 ? 'Henüz tarla yok' : 'Analiz yapılamadı'}</span>
+                                <span className="next-field">Bu hafta planlanmış sulama yok</span>
                             </div>
                         )}
                     </div>
