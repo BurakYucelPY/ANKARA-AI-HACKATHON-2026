@@ -9,6 +9,7 @@ import ManualControl from './pages/ManualControl';
 import Sensors from './pages/Sensors';
 import Weather from './pages/Weather';
 import FieldDetail from './pages/FieldDetail';
+import IrrigationPlan from './pages/IrrigationPlan';
 import './App.css';
 
 const ProtectedRoute = ({ children }) => {
@@ -35,6 +36,7 @@ function AppRoutes() {
               <Route path="/weather" element={<Weather />} />
               <Route path="/plants" element={<PlantLibrary />} />
               <Route path="/manual" element={<ManualControl />} />
+              <Route path="/irrigation" element={<IrrigationPlan />} />
               <Route path="/sensors" element={<Sensors />} />
             </Routes>
           </Layout>

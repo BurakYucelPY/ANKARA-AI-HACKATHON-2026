@@ -13,6 +13,7 @@ const Navbar = () => {
     { path: '/weather', label: 'Hava Durumu', icon: '🌤️' },
     { path: '/plants', label: 'Bitki Kütüphanesi', icon: '🌱' },
     { path: '/manual', label: 'Manuel Yönetim', icon: '🎛️' },
+    { path: '/irrigation', label: 'Sulama Planı', icon: '📋' },
     { path: '/sensors', label: 'Sensörler', icon: '📡' },
   ];
 
