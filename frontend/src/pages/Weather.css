@@ -32,43 +32,73 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
 }
 
 .weather-location h2 {
-    font-size: 1.5rem;
-    color: white;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: white !important;
+    opacity: 1 !important;
     margin-bottom: var(--space-1);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.1);
+    letter-spacing: -0.5px;
 }
 
 .weather-location p {
-    font-size: 0.9rem;
-    color: var(--gray-400);
+    font-size: 0.95rem;
+    color: var(--gray-300);
+    font-weight: 500;
 }
 
 .weather-current {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
 }
 
 .weather-icon {
-    font-size: 3rem;
+    font-size: 4rem;
+    filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.3));
+    animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
 }
 
 .weather-temp {
-    font-size: 2.5rem;
-    font-weight: 700;
-    background: var(--gradient-primary);
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 50%, #0891b2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 2px 8px rgba(34, 211, 238, 0.3));
+    line-height: 1;
 }
 
 .weather-condition {
-    color: var(--gray-300);
-    font-size: 1rem;
+    color: white;
+    font-size: 1.15rem;
+    font-weight: 600;
     margin-bottom: var(--space-4);
+    padding: var(--space-2) var(--space-4);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+    display: inline-block;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* Weather Alerts */
@@ -118,31 +148,49 @@
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-3);
     padding: var(--space-4);
-    background: rgba(255, 255, 255, 0.03);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
     border-radius: var(--radius-lg);
     margin-bottom: var(--space-4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(4px);
 }
 
 .weather-detail {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    transition: background 0.2s ease;
+}
+
+.weather-detail:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .detail-icon {
-    font-size: 1rem;
+    font-size: 1.25rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(34, 211, 238, 0.15);
+    border-radius: var(--radius-md);
 }
 
 .detail-label {
     flex: 1;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--gray-400);
+    font-weight: 500;
 }
 
 .detail-value {
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 700;
     color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 /* 5 Day Forecast */
@@ -277,6 +325,529 @@
 .info-note-text p {
     font-size: 0.9rem;
     line-height: 1.6;
+}
+
+/* =====================
+   WEATHER ANIMATIONS
+   ===================== */
+
+/* Animasyon Layer - tüm efektler burada */
+.weather-animation-layer {
+    position: absolute;
+    top: calc(-1 * var(--space-6));
+    left: calc(-1 * var(--space-6));
+    right: calc(-1 * var(--space-6));
+    bottom: calc(-1 * var(--space-6));
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+}
+
+/* İçerik z-index */
+.weather-card>*:not(.weather-animation-layer) {
+    position: relative;
+    z-index: 1;
+}
+
+/* ☀️ GÜNEŞLI - Açık hava */
+.weather-sunny .weather-animation-layer::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: sunPulse 3s ease-in-out infinite;
+}
+
+.weather-sunny .weather-animation-layer::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -30%;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.6) 0%, transparent 60%);
+    border-radius: 50%;
+    animation: sunPulse 3s ease-in-out infinite 0.5s;
+}
+
+@keyframes sunPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
+}
+
+/* 🌤️ AZ BULUTLU */
+.weather-few-clouds .weather-animation-layer::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    right: 10%;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: sunPulse 4s ease-in-out infinite;
+}
+
+.weather-few-clouds .weather-animation-layer::after {
+    content: '';
+    position: absolute;
+    top: 15%;
+    left: -20%;
+    width: 80px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    animation: cloudDrift 20s linear infinite;
+    box-shadow: 20px 10px 0 rgba(255, 255, 255, 0.08);
+}
+
+@keyframes cloudDrift {
+    0% {
+        transform: translateX(-100px);
+    }
+
+    100% {
+        transform: translateX(calc(100% + 200px));
+    }
+}
+
+/* ⛅ PARÇALI BULUTLU */
+.weather-partly-cloudy .weather-animation-layer::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: -50px;
+    width: 100px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 50px;
+    animation: cloudDrift 15s linear infinite;
+    box-shadow: 30px 15px 0 rgba(255, 255, 255, 0.1);
+}
+
+.weather-partly-cloudy .weather-animation-layer::after {
+    content: '';
+    position: absolute;
+    top: 25%;
+    left: -80px;
+    width: 120px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50px;
+    animation: cloudDrift 22s linear infinite 3s;
+    box-shadow: 40px 20px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ☁️ KAPALI */
+.weather-cloudy .weather-animation-layer {
+    background: linear-gradient(180deg, rgba(100, 116, 139, 0.1) 0%, transparent 50%);
+}
+
+.weather-cloudy .weather-animation-layer::before {
+    content: '';
+    position: absolute;
+    top: 5%;
+    left: -60px;
+    width: 140px;
+    height: 60px;
+    background: rgba(148, 163, 184, 0.15);
+    border-radius: 50px;
+    animation: cloudDrift 18s linear infinite;
+    box-shadow: 50px 20px 0 rgba(148, 163, 184, 0.12), 100px 10px 0 rgba(148, 163, 184, 0.1);
+}
+
+.weather-cloudy .weather-animation-layer::after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: -100px;
+    width: 160px;
+    height: 70px;
+    background: rgba(148, 163, 184, 0.1);
+    border-radius: 50px;
+    animation: cloudDrift 25s linear infinite 5s;
+    box-shadow: 60px 25px 0 rgba(148, 163, 184, 0.08);
+}
+
+/* 🌫️ SİSLİ - Dalgalanan sis efekti */
+.weather-fog .weather-animation-layer {
+    background: linear-gradient(180deg,
+            rgba(148, 163, 184, 0.18) 0%,
+            rgba(148, 163, 184, 0.12) 20%,
+            rgba(148, 163, 184, 0.06) 35%,
+            rgba(148, 163, 184, 0.02) 50%,
+            transparent 60%);
+}
+
+.weather-fog .weather-animation-layer::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -80%;
+    width: 260%;
+    height: 140%;
+    background:
+        radial-gradient(ellipse 100% 80% at 30% 50%, rgba(255, 255, 255, 0.12) 0%, transparent 45%),
+        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 40%),
+        radial-gradient(ellipse 90% 70% at 50% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+    animation: fogWave 6s ease-in-out infinite;
+}
+
+.weather-fog .weather-animation-layer::after {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -60%;
+    width: 220%;
+    height: 120%;
+    background:
+        radial-gradient(ellipse 70% 50% at 60% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 45%),
+        radial-gradient(ellipse 100% 60% at 25% 70%, rgba(255, 255, 255, 0.08) 0%, transparent 40%);
+    animation: fogWave 8s ease-in-out infinite 2s reverse;
+}
+
+@keyframes fogWave {
+
+    0%,
+    100% {
+        transform: translateX(0) translateY(0) scale(1);
+        opacity: 0.15;
+    }
+
+    25% {
+        transform: translateX(20%) translateY(-8%) scale(1.1);
+        opacity: 0.55;
+    }
+
+    50% {
+        transform: translateX(35%) translateY(0) scale(1);
+        opacity: 0.25;
+    }
+
+    75% {
+        transform: translateX(20%) translateY(8%) scale(1.1);
+        opacity: 0.6;
+    }
+}
+
+/* 🌧️ YAĞMURLU - Gerçekçi yağmur damlaları */
+.weather-rain .weather-animation-layer {
+    background: linear-gradient(180deg, rgba(14, 165, 233, 0.1) 0%, transparent 100%);
+}
+
+/* Birinci damla katmanı - Yavaş düşen damlalar */
+.weather-rain .weather-animation-layer::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 18px;
+    background: rgba(174, 214, 241, 0.75);
+    top: -150px;
+    left: 25%;
+    border-radius: 0 0 8px 8px;
+    animation: rainDropSlow 1.8s linear infinite;
+    box-shadow:
+        /* Damlaları geniş Y aralığında dağıt - staggered effect */
+        45px 25px 0 rgba(174, 214, 241, 0.6),
+        95px 80px 0 rgba(174, 214, 241, 0.55),
+        150px 45px 0 rgba(174, 214, 241, 0.7),
+        200px 120px 0 rgba(174, 214, 241, 0.5),
+        255px 15px 0 rgba(174, 214, 241, 0.65),
+        /* İkinci set - farklı Y pozisyonları */
+        25px 160px 0 rgba(174, 214, 241, 0.55),
+        70px 200px 0 rgba(174, 214, 241, 0.6),
+        120px 140px 0 rgba(174, 214, 241, 0.5),
+        175px 180px 0 rgba(174, 214, 241, 0.65),
+        230px 220px 0 rgba(174, 214, 241, 0.55);
+}
+
+/* İkinci damla katmanı - Farklı zamanlama */
+.weather-rain .weather-animation-layer::after {
+    content: '';
+    position: absolute;
+    width: 1px;
+    height: 14px;
+    background: rgba(174, 214, 241, 0.6);
+    top: -120px;
+    left: 20%;
+    border-radius: 0 0 6px 6px;
+    animation: rainDropSlow 2.2s linear infinite 0.9s;
+    /* 0.9s delay */
+    box-shadow:
+        35px 60px 0 rgba(174, 214, 241, 0.5),
+        80px 15px 0 rgba(174, 214, 241, 0.55),
+        130px 100px 0 rgba(174, 214, 241, 0.45),
+        180px 35px 0 rgba(174, 214, 241, 0.6),
+        225px 150px 0 rgba(174, 214, 241, 0.5),
+        /* İkinci set */
+        55px 180px 0 rgba(174, 214, 241, 0.45),
+        105px 130px 0 rgba(174, 214, 241, 0.55),
+        160px 200px 0 rgba(174, 214, 241, 0.5),
+        210px 90px 0 rgba(174, 214, 241, 0.55),
+        265px 170px 0 rgba(174, 214, 241, 0.45);
+}
+
+@keyframes rainDropSlow {
+    0% {
+        transform: translateY(0);
+        opacity: 0.3;
+    }
+
+    15% {
+        opacity: 0.9;
+    }
+
+    85% {
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: translateY(420px);
+        opacity: 0;
+    }
+}
+
+/* ❄️ KARLI - Staggered kar taneleri */
+.weather-snow .weather-animation-layer {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+}
+
+/* Birinci kar katmanı */
+.weather-snow .weather-animation-layer::before {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    top: -150px;
+    left: 20%;
+    animation: snowFall 4s linear infinite;
+    box-shadow:
+        /* Geniş Y dağılımı ile staggered efekt */
+        40px 30px 0 rgba(255, 255, 255, 0.8),
+        90px 80px 0 rgba(255, 255, 255, 0.85),
+        140px 20px 0 rgba(255, 255, 255, 0.75),
+        195px 100px 0 rgba(255, 255, 255, 0.9),
+        /* İkinci set */
+        25px 150px 0 rgba(255, 255, 255, 0.7),
+        70px 200px 0 rgba(255, 255, 255, 0.8),
+        120px 130px 0 rgba(255, 255, 255, 0.85),
+        175px 180px 0 rgba(255, 255, 255, 0.75),
+        220px 60px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* İkinci kar katmanı - küçük taneler, farklı hız */
+.weather-snow .weather-animation-layer::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    top: -120px;
+    left: 15%;
+    animation: snowFall 5s linear infinite 1.5s;
+    box-shadow:
+        35px 50px 0 rgba(255, 255, 255, 0.65),
+        80px 15px 0 rgba(255, 255, 255, 0.7),
+        130px 90px 0 rgba(255, 255, 255, 0.6),
+        180px 40px 0 rgba(255, 255, 255, 0.75),
+        /* İkinci set */
+        55px 170px 0 rgba(255, 255, 255, 0.6),
+        105px 220px 0 rgba(255, 255, 255, 0.7),
+        155px 140px 0 rgba(255, 255, 255, 0.65),
+        205px 190px 0 rgba(255, 255, 255, 0.7),
+        250px 110px 0 rgba(255, 255, 255, 0.6);
+}
+
+@keyframes snowFall {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0.3;
+    }
+
+    15% {
+        opacity: 0.9;
+    }
+
+    85% {
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: translateY(450px) translateX(-25px);
+        opacity: 0;
+    }
+}
+
+/* ⛈️ FIRTINA - Şiddetli yağmur ve şimşek */
+.weather-storm .weather-animation-layer {
+    background: linear-gradient(180deg,
+            rgba(51, 65, 85, 0.3) 0%,
+            rgba(30, 41, 59, 0.2) 40%,
+            transparent 100%);
+}
+
+/* Fırtına kartı metin stilleri - daha görünür */
+.weather-storm .weather-header,
+.weather-storm .weather-location,
+.weather-storm .weather-condition {
+    position: relative;
+    z-index: 5;
+}
+
+.weather-storm .weather-location h2 {
+    color: #ffffff !important;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 255, 255, 0.3);
+    position: relative;
+    z-index: 5;
+}
+
+.weather-storm .weather-location p {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+}
+
+.weather-storm .weather-temp {
+    filter: drop-shadow(0 2px 15px rgba(34, 211, 238, 0.6));
+}
+
+.weather-storm .weather-condition {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Şiddetli yağmur damlaları - geniş Y dağılımı */
+.weather-storm .weather-animation-layer::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 22px;
+    background: rgba(200, 200, 220, 0.9);
+    top: -180px;
+    left: 20%;
+    border-radius: 0 0 6px 6px;
+    animation: stormDropSlow 1.2s linear infinite;
+    box-shadow:
+        /* Geniş Y dağılımı ile staggered efekt */
+        35px 30px 0 rgba(200, 200, 220, 0.85),
+        75px 90px 0 rgba(200, 200, 220, 0.8),
+        115px 50px 0 rgba(200, 200, 220, 0.9),
+        160px 130px 0 rgba(200, 200, 220, 0.75),
+        205px 20px 0 rgba(200, 200, 220, 0.85),
+        250px 100px 0 rgba(200, 200, 220, 0.8),
+        /* İkinci set - farklı Y pozisyonları */
+        20px 170px 0 rgba(200, 200, 220, 0.75),
+        60px 220px 0 rgba(200, 200, 220, 0.8),
+        100px 150px 0 rgba(200, 200, 220, 0.85),
+        145px 200px 0 rgba(200, 200, 220, 0.7),
+        185px 180px 0 rgba(200, 200, 220, 0.8),
+        230px 240px 0 rgba(200, 200, 220, 0.75),
+        275px 160px 0 rgba(200, 200, 220, 0.85);
+}
+
+/* Şimşek efekti için ayrı katman */
+.weather-storm .weather-animation-layer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    animation: stormLightning 2.5s infinite;
+    pointer-events: none;
+}
+
+@keyframes stormDropSlow {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0.4;
+    }
+
+    12% {
+        opacity: 1;
+    }
+
+    88% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(450px) translateX(-5px);
+        opacity: 0;
+    }
+}
+
+@keyframes stormLightning {
+
+    0%,
+    82%,
+    85%,
+    88%,
+    92%,
+    95%,
+    100% {
+        background: transparent;
+    }
+
+    83%,
+    84% {
+        background: radial-gradient(ellipse 120% 80% at 25% 30%,
+                rgba(255, 255, 255, 0.5) 0%,
+                rgba(200, 210, 255, 0.3) 25%,
+                transparent 60%);
+    }
+
+    93%,
+    94% {
+        background: radial-gradient(ellipse 100% 70% at 75% 25%,
+                rgba(255, 255, 255, 0.6) 0%,
+                rgba(200, 210, 255, 0.35) 25%,
+                transparent 55%);
+    }
+}
+
+/* DEFAULT */
+.weather-default .weather-animation-layer::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    right: 10%;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: gentlePulse 4s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
 }
 
 /* Responsive */

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getFields, createField, getPlantTypes, getIlceler } from '../services/api';
+import { getPlantImage } from '../data/plantImages';
 import Card from '../components/Card';
 import './Fields.css';
 
@@ -26,7 +27,8 @@ const Fields = () => {
         }
     };
 
-    useEffect(() => { fetchFields(); // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        fetchFields(); // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user.id]);
 
     const openAddModal = async () => {
@@ -187,8 +189,19 @@ const Fields = () => {
                         const statusBadge = getStatusBadge(field.status);
                         const moisture = field.sensorData.moisture;
                         const moistureNum = typeof moisture === 'number' ? moisture : 0;
+                        const plantName = field.plant_type?.name || 'default';
+                        const plantImage = getPlantImage(plantName);
+
                         return (
-                            <Card key={field.id} className={`field-card field-${field.status}`}>
+                            <div
+                                key={field.id}
+                                className={`field-card field-${field.status}`}
+                                style={{
+                                    backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url(${plantImage.image})`,
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center'
+                                }}
+                            >
                                 <div className="field-header">
                                     <div className="field-info">
                                         <h3 className="field-name">{field.name}</h3>
@@ -198,7 +211,10 @@ const Fields = () => {
                                 </div>
 
                                 <div className="field-plant">
-                                    <span className="plant-icon">🌱</span>
+                                    <span
+                                        className="plant-color-dot"
+                                        style={{ backgroundColor: plantImage.color }}
+                                    ></span>
                                     <span className="plant-name">{field.plant_type?.name || 'Bilinmiyor'}</span>
                                 </div>
 
@@ -237,7 +253,7 @@ const Fields = () => {
                                 <div className="field-footer">
                                     <span className="last-watered">💧 Son veri: {formatTimestamp(field.sensorData.timestamp)}</span>
                                 </div>
-                            </Card>
+                            </div>
                         );
                     })}
                 </div>

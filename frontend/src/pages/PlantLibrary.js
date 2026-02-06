@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getPlantTypes } from '../services/api';
-import Card from '../components/Card';
+import { getPlantImage } from '../data/plantImages';
 import './PlantLibrary.css';
 
 const PlantLibrary = () => {
@@ -112,30 +112,37 @@ const PlantLibrary = () => {
 
             {/* Bitki Grid */}
             <div className="plants-grid">
-                {filteredPlants.map((plant) => (
-                    <Card
-                        key={plant.id}
-                        className="plant-card"
-                        onClick={() => setSelectedPlant(plant)}
-                    >
-                        <div className="plant-icon-large">{plant.icon}</div>
-                        <h3 className="plant-name">{plant.name}</h3>
-                        <span className="plant-category">{plant.category}</span>
+                {filteredPlants.map((plant) => {
+                    const plantImage = getPlantImage(plant.name);
+                    return (
+                        <div
+                            key={plant.id}
+                            className="plant-card"
+                            onClick={() => setSelectedPlant(plant)}
+                            style={{
+                                backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.65), rgba(15, 23, 42, 0.85)), url(${plantImage.image})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center'
+                            }}
+                        >
+                            <h3 className="plant-name">{plant.name}</h3>
+                            <span className="plant-category">{plant.category}</span>
 
-                        <div className="plant-quick-info">
-                            <div className="quick-info-item">
-                                <span className="info-label">Su İhtiyacı</span>
-                                <span className={`info-value ${getWaterNeedClass(plant.waterNeed)}`}>
-                                    {plant.waterNeed}
-                                </span>
-                            </div>
-                            <div className="quick-info-item">
-                                <span className="info-label">Hasat</span>
-                                <span className="info-value">{plant.harvestTime}</span>
+                            <div className="plant-quick-info">
+                                <div className="quick-info-item">
+                                    <span className="info-label">Su İhtiyacı</span>
+                                    <span className={`info-value ${getWaterNeedClass(plant.waterNeed)}`}>
+                                        {plant.waterNeed}
+                                    </span>
+                                </div>
+                                <div className="quick-info-item">
+                                    <span className="info-label">Hasat</span>
+                                    <span className="info-value">{plant.harvestTime}</span>
+                                </div>
                             </div>
                         </div>
-                    </Card>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Detay Modal */}
@@ -144,8 +151,14 @@ const PlantLibrary = () => {
                     <div className="plant-modal" onClick={(e) => e.stopPropagation()}>
                         <button className="modal-close" onClick={() => setSelectedPlant(null)}>✕</button>
 
-                        <div className="modal-header">
-                            <span className="modal-icon">{selectedPlant.icon}</span>
+                        <div
+                            className="modal-header"
+                            style={{
+                                backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.75)), url(${getPlantImage(selectedPlant.name).image})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center'
+                            }}
+                        >
                             <div className="modal-title-section">
                                 <h2>{selectedPlant.name}</h2>
                                 <span className="plant-category">{selectedPlant.category}</span>

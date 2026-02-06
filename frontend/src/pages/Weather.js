@@ -81,6 +81,68 @@ const Weather = () => {
                 );
 
                 setWeatherData(weatherResults);
+
+                // DEBUG: Animasyonları test etmek için mock data ekle
+                const mockForecast = [
+                    { day: 'Bugün', high: 22, low: 14, icon: '☀️', condition: 'Açık', humidity: 45, windSpeed: 8, rainProb: 0 },
+                    { day: 'Yarın', high: 20, low: 12, icon: '🌤️', condition: 'Az Bulutlu', humidity: 50, windSpeed: 10, rainProb: 10 },
+                    { day: 'Çarşamba', high: 18, low: 10, icon: '⛅', condition: 'Parçalı Bulutlu', humidity: 55, windSpeed: 12, rainProb: 20 },
+                    { day: 'Perşembe', high: 16, low: 9, icon: '🌧️', condition: 'Yağmurlu', humidity: 80, windSpeed: 15, rainProb: 70 },
+                    { day: 'Cuma', high: 19, low: 11, icon: '☀️', condition: 'Açık', humidity: 40, windSpeed: 8, rainProb: 5 },
+                ];
+                const debugWeatherData = {
+                    'debug-sunny': {
+                        city: 'Antalya', district: '☀️ Güneşli Test',
+                        temperature: 28, feelsLike: 30, humidity: 45, windSpeed: 8,
+                        condition: 'Açık', conditionIcon: '☀️',
+                        precipitation: 'Yok', forecast: mockForecast, alerts: []
+                    },
+                    'debug-few-clouds': {
+                        city: 'İzmir', district: '🌤️ Az Bulutlu Test',
+                        temperature: 22, feelsLike: 23, humidity: 55, windSpeed: 12,
+                        condition: 'Az Bulutlu', conditionIcon: '🌤️',
+                        precipitation: 'Yok', forecast: mockForecast, alerts: []
+                    },
+                    'debug-partly-cloudy': {
+                        city: 'İstanbul', district: '⛅ Parçalı Bulutlu Test',
+                        temperature: 18, feelsLike: 17, humidity: 60, windSpeed: 15,
+                        condition: 'Parçalı Bulutlu', conditionIcon: '⛅',
+                        precipitation: 'Yok', forecast: mockForecast, alerts: []
+                    },
+                    'debug-cloudy': {
+                        city: 'Trabzon', district: '☁️ Kapalı Test',
+                        temperature: 14, feelsLike: 12, humidity: 75, windSpeed: 20,
+                        condition: 'Kapalı', conditionIcon: '☁️',
+                        precipitation: 'Yok', forecast: mockForecast, alerts: [{ type: 'wind', message: 'Kuvvetli rüzgar bekleniyor' }]
+                    },
+                    'debug-rain': {
+                        city: 'Rize', district: '🌧️ Yağmurlu Test',
+                        temperature: 12, feelsLike: 10, humidity: 90, windSpeed: 18,
+                        condition: 'Orta Yağmur', conditionIcon: '🌧️',
+                        precipitation: 'Var', forecast: mockForecast, alerts: [{ type: 'rain', message: 'Yağış bekleniyor' }]
+                    },
+                    'debug-snow': {
+                        city: 'Erzurum', district: '❄️ Karlı Test',
+                        temperature: -5, feelsLike: -10, humidity: 80, windSpeed: 25,
+                        condition: 'Orta Kar', conditionIcon: '❄️',
+                        precipitation: 'Var', forecast: mockForecast, alerts: [{ type: 'frost', message: 'Don riski - Bitkileri korumaya alın' }]
+                    },
+                    'debug-storm': {
+                        city: 'Adana', district: '⛈️ Fırtına Test',
+                        temperature: 20, feelsLike: 18, humidity: 85, windSpeed: 45,
+                        condition: 'Gök Gürültülü Fırtına', conditionIcon: '⛈️',
+                        precipitation: 'Var', forecast: mockForecast, alerts: [{ type: 'storm', message: 'Şiddetli fırtına bekleniyor!' }]
+                    },
+                    'debug-fog': {
+                        city: 'Bursa', district: '🌫️ Sisli Test',
+                        temperature: 8, feelsLike: 6, humidity: 95, windSpeed: 5,
+                        condition: 'Sisli', conditionIcon: '🌫️',
+                        precipitation: 'Yok', forecast: mockForecast, alerts: []
+                    },
+                };
+                setWeatherData(prev => ({ ...debugWeatherData, ...prev }));
+                // DEBUG SONU
+
             } catch (err) {
                 setError('Hava durumu verileri yüklenirken hata oluştu.');
                 console.error(err);
@@ -150,6 +212,46 @@ const Weather = () => {
         return alerts;
     };
 
+    // Hava durumuna göre animasyon class'ı döndür
+    const getWeatherClass = (condition) => {
+        const conditionLower = (condition || '').toLowerCase();
+
+        // Fırtına
+        if (conditionLower.includes('fırtına') || conditionLower.includes('dolu')) {
+            return 'weather-storm';
+        }
+        // Kar
+        if (conditionLower.includes('kar')) {
+            return 'weather-snow';
+        }
+        // Yağmur veya sağanak
+        if (conditionLower.includes('yağmur') || conditionLower.includes('sağanak') || conditionLower.includes('çisenti')) {
+            return 'weather-rain';
+        }
+        // Sis
+        if (conditionLower.includes('sis') || conditionLower.includes('kırağı')) {
+            return 'weather-fog';
+        }
+        // Kapalı
+        if (conditionLower.includes('kapalı')) {
+            return 'weather-cloudy';
+        }
+        // Parçalı bulutlu
+        if (conditionLower.includes('parçalı')) {
+            return 'weather-partly-cloudy';
+        }
+        // Az bulutlu
+        if (conditionLower.includes('az bulutlu')) {
+            return 'weather-few-clouds';
+        }
+        // Açık / Güneşli
+        if (conditionLower.includes('açık') || conditionLower === '') {
+            return 'weather-sunny';
+        }
+
+        return 'weather-default';
+    };
+
     const getFieldsByIlce = (ilce) => fieldsMap[ilce] || [];
     const locations = Object.keys(weatherData);
 
@@ -205,7 +307,10 @@ const Weather = () => {
                         const locationFields = getFieldsByIlce(ilce);
 
                         return (
-                            <Card key={ilce} className="weather-card">
+                            <Card key={ilce} className={`weather-card ${getWeatherClass(weather.condition)}`}>
+                                {/* Animasyon overlay */}
+                                <div className="weather-animation-layer"></div>
+
                                 <div className="weather-header">
                                     <div className="weather-location">
                                         <h2>{weather.city}</h2>
