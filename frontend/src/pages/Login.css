@@ -68,7 +68,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4rem 2.5rem 2.5rem;
+  padding: 3rem 4.5rem 1.5rem;
 }
 
 /* Su dolum katmanı */
@@ -137,22 +137,24 @@
   position: relative;
   z-index: 2;
   width: 100%;
+  max-width: 280px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   flex: 1;
 }
 
 /* Başlık */
 .login-header {
   text-align: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.6rem;
 }
 
 .login-logo {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   display: block;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.1rem;
   animation: dropBounce 2s ease-in-out infinite;
 }
 
@@ -162,17 +164,17 @@
 }
 
 .login-header h1 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   background: linear-gradient(135deg, #38bdf8, #0ea5e9, #0284c7);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin: 0 0 0.15rem;
+  margin: 0 0 0.1rem;
 }
 
 .login-header p {
   color: var(--gray-400);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   margin: 0;
 }
 
@@ -180,21 +182,21 @@
 .login-tabs {
   display: flex;
   gap: 0.35rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.6rem;
   background: rgba(255, 255, 255, 0.06);
-  border-radius: 0.75rem;
+  border-radius: 0.6rem;
   padding: 3px;
   width: 100%;
 }
 
 .login-tab {
   flex: 1;
-  padding: 0.5rem;
+  padding: 0.35rem;
   border: none;
-  border-radius: 0.6rem;
+  border-radius: 0.5rem;
   background: transparent;
   color: var(--gray-400);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.25s;
@@ -211,17 +213,19 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  align-items: center;
 }
 
 .login-form .form-group {
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.6rem;
+  width: 100%;
 }
 
 .login-form label {
   display: block;
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   color: var(--gray-300);
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.2rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -229,12 +233,12 @@
 
 .login-form input {
   width: 100%;
-  padding: 0.65rem 0.9rem;
+  padding: 0.5rem 0.75rem;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0.65rem;
+  border-radius: 0.5rem;
   color: var(--gray-100);
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   transition: all 0.25s;
   box-sizing: border-box;
 }
@@ -255,22 +259,22 @@
   background: rgba(244, 67, 54, 0.1);
   border: 1px solid rgba(244, 67, 54, 0.3);
   color: #f44336;
-  padding: 0.5rem 0.85rem;
-  border-radius: 0.65rem;
-  font-size: 0.8rem;
-  margin-bottom: 0.75rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
   text-align: center;
 }
 
 /* Giriş Butonu */
 .login-btn {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.55rem;
   border: none;
-  border-radius: 0.65rem;
+  border-radius: 0.5rem;
   background: linear-gradient(135deg, #0ea5e9, #0284c7);
   color: white;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
@@ -303,9 +307,9 @@
 /* Su dolma yüzde göstergesi */
 .fill-indicator {
   text-align: center;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: rgba(56, 189, 248, 0.6);
-  margin-top: 0.4rem;
+  margin-top: 0.3rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   transition: color 0.3s;
@@ -331,20 +335,26 @@
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 440px) {
+@media (max-width: 480px) {
   .login-drop {
     width: 370px;
-    height: 510px;
-    padding: 3.5rem 2rem 2rem;
+    height: 500px;
+    padding: 2.5rem 3.5rem 1.25rem;
   }
-  .login-header h1 { font-size: 1.3rem; }
-  .login-logo { font-size: 2rem; }
+  .drop-content {
+    max-width: 240px;
+  }
+  .login-header h1 { font-size: 1.1rem; }
+  .login-logo { font-size: 1.6rem; }
 }
 
-@media (max-width: 350px) {
+@media (max-width: 390px) {
   .login-drop {
-    width: 330px;
-    height: 470px;
-    padding: 3rem 1.5rem 1.75rem;
+    width: 320px;
+    height: 450px;
+    padding: 2rem 3rem 1rem;
+  }
+  .drop-content {
+    max-width: 210px;
   }
 }

@@ -62,16 +62,14 @@
 }
 .irrigation-stat-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1rem;
-}
-.stat-icon {
-  font-size: 2rem;
-  flex-shrink: 0;
+  text-align: center;
+  gap: 0.25rem;
 }
 .stat-value {
   display: block;
-  font-size: 1.5rem;
+  font-size: 2.25rem;
   font-weight: 800;
   color: var(--gray-100);
   line-height: 1.2;
@@ -80,7 +78,6 @@
   display: block;
   font-size: 0.78rem;
   color: var(--gray-400);
-  margin-top: 0.1rem;
 }
 
 /* Gün Tabs */
@@ -146,31 +143,34 @@
   gap: 1rem;
 }
 
-.schedule-day {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 1rem;
-  padding: 1.25rem;
-  transition: border-color 0.2s;
+.schedule-day-card {
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.schedule-day.is-today {
-  border-color: rgba(56, 189, 248, 0.3);
-  box-shadow: 0 0 20px rgba(56, 189, 248, 0.05);
+.schedule-day-card.is-today {
+  border-color: rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.08);
+}
+.schedule-day-card.no-slots {
+  opacity: 0.6;
 }
 
 .schedule-day-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
-.schedule-day-name {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--gray-100);
+.schedule-day-left {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
+}
+.schedule-day-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gray-100);
 }
 .today-badge {
   background: linear-gradient(135deg, #0ea5e9, #0284c7);
@@ -178,90 +178,113 @@
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
-  padding: 0.15rem 0.5rem;
+  padding: 0.2rem 0.55rem;
   border-radius: 9999px;
   letter-spacing: 0.04em;
 }
+.schedule-day-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.schedule-day-total {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #38bdf8;
+}
 .schedule-day-count {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+}
+.schedule-day-count.empty {
   color: var(--gray-500);
 }
 
-/* Timeline Slots */
+/* Slot Kartları */
 .schedule-slots {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 0.65rem;
 }
 
-.schedule-slot {
+.schedule-slot-card {
   display: flex;
-  gap: 1rem;
+  gap: 0.85rem;
   align-items: flex-start;
-  padding: 0.5rem 0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  transition: all 0.2s;
+}
+.schedule-slot-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(56, 189, 248, 0.15);
 }
 
-.slot-time-bar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 16px;
+.slot-time-badge {
   flex-shrink: 0;
-  padding-top: 4px;
-}
-.slot-time-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #0ea5e9;
-  border: 2px solid rgba(14, 165, 233, 0.3);
-  flex-shrink: 0;
-}
-.slot-time-line {
-  width: 2px;
-  flex: 1;
-  min-height: 30px;
-  background: rgba(14, 165, 233, 0.15);
-  margin-top: 4px;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(56, 189, 248, 0.1));
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.5rem;
+  min-width: 48px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
-.slot-content {
+.slot-card-body {
   flex: 1;
   min-width: 0;
 }
-.slot-time {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--gray-100);
-  margin-bottom: 0.3rem;
+.slot-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
 }
-.slot-details {
+.slot-time-range {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gray-100);
+}
+.slot-duration-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--gray-400);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.slot-card-stats {
   display: flex;
   gap: 1rem;
-  flex-wrap: wrap;
 }
-.slot-amount,
-.slot-duration {
-  font-size: 0.82rem;
+.slot-stat {
+  font-size: 0.8rem;
   color: var(--gray-400);
 }
+
 .slot-note {
-  display: block;
   font-size: 0.78rem;
   color: var(--gray-500);
-  margin-top: 0.25rem;
+  margin: 0.3rem 0 0;
   font-style: italic;
 }
 
 /* Boş gün */
 .schedule-empty {
   text-align: center;
-  padding: 1rem 0 0.5rem;
+  padding: 0.75rem 0 0.25rem;
   color: var(--gray-500);
   font-size: 0.85rem;
-}
-.schedule-empty span {
-  margin-right: 0.35rem;
 }
 
 /* AI Notu */

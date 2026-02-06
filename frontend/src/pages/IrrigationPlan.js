@@ -109,31 +109,22 @@ const IrrigationPlan = () => {
       {/* Özet Kartları */}
       <div className="irrigation-stats">
         <Card className="irrigation-stat-card">
-          <span className="stat-icon">💧</span>
-          <div>
-            <span className="stat-value">{weeklyTotal} L</span>
-            <span className="stat-label">Haftalık Toplam Su</span>
-          </div>
+          <span className="stat-value">{weeklyTotal} L</span>
+          <span className="stat-label">Haftalık Toplam Su</span>
         </Card>
         <Card className="irrigation-stat-card">
-          <span className="stat-icon">📅</span>
-          <div>
-            <span className="stat-value">{weeklySlotCount}</span>
-            <span className="stat-label">Sulama Sayısı</span>
-          </div>
+          <span className="stat-value">{weeklySlotCount}</span>
+          <span className="stat-label">Sulama Sayısı</span>
         </Card>
         <Card className="irrigation-stat-card">
-          <span className="stat-icon">⏱️</span>
-          <div>
-            <span className="stat-value">
-              {plan.weeklyPlan.reduce((sum, d) => sum + d.slots.reduce((s, sl) => {
-                const [sh, sm] = sl.start.split(':').map(Number);
-                const [eh, em] = sl.end.split(':').map(Number);
-                return s + (eh * 60 + em) - (sh * 60 + sm);
-              }, 0), 0)} dk
-            </span>
-            <span className="stat-label">Toplam Süre</span>
-          </div>
+          <span className="stat-value">
+            {plan.weeklyPlan.reduce((sum, d) => sum + d.slots.reduce((s, sl) => {
+              const [sh, sm] = sl.start.split(':').map(Number);
+              const [eh, em] = sl.end.split(':').map(Number);
+              return s + (eh * 60 + em) - (sh * 60 + sm);
+            }, 0), 0)} dk
+          </span>
+          <span className="stat-label">Toplam Süre</span>
         </Card>
       </div>
 
@@ -164,55 +155,55 @@ const IrrigationPlan = () => {
         {visibleDays.map((day, idx) => {
           const dayIndex = selectedDay !== null ? selectedDay : idx;
           const isToday = dayIndex === todayMapped;
+          const dayTotal = day.slots.reduce((s, sl) => s + sl.amount, 0);
 
           return (
-            <div key={dayIndex} className={`schedule-day ${isToday ? 'is-today' : ''}`}>
+            <Card key={dayIndex} className={`schedule-day-card ${isToday ? 'is-today' : ''} ${day.slots.length === 0 ? 'no-slots' : ''}`}>
               <div className="schedule-day-header">
-                <span className="schedule-day-name">
+                <div className="schedule-day-left">
                   {isToday && <span className="today-badge">Bugün</span>}
-                  {DAYS_FULL[dayIndex]}
-                </span>
-                <span className="schedule-day-count">
-                  {day.slots.length > 0
-                    ? `${day.slots.length} sulama`
-                    : 'Sulama yok'
-                  }
-                </span>
+                  <span className="schedule-day-name">{DAYS_FULL[dayIndex]}</span>
+                </div>
+                <div className="schedule-day-right">
+                  {day.slots.length > 0 && (
+                    <span className="schedule-day-total">💧 {dayTotal} L</span>
+                  )}
+                  <span className={`schedule-day-count ${day.slots.length === 0 ? 'empty' : ''}`}>
+                    {day.slots.length > 0 ? `${day.slots.length} sulama` : 'Dinlenme'}
+                  </span>
+                </div>
               </div>
 
               {day.slots.length > 0 ? (
                 <div className="schedule-slots">
-                  {day.slots.map((slot, si) => (
-                    <div key={si} className="schedule-slot">
-                      <div className="slot-time-bar">
-                        <div className="slot-time-dot" />
-                        {si < day.slots.length - 1 && <div className="slot-time-line" />}
-                      </div>
-                      <div className="slot-content">
-                        <div className="slot-time">
-                          {slot.start} — {slot.end}
+                  {day.slots.map((slot, si) => {
+                    const [sh, sm] = slot.start.split(':').map(Number);
+                    const [eh, em] = slot.end.split(':').map(Number);
+                    const duration = (eh * 60 + em) - (sh * 60 + sm);
+                    return (
+                      <div key={si} className="schedule-slot-card">
+                        <div className="slot-time-badge">{slot.start}</div>
+                        <div className="slot-card-body">
+                          <div className="slot-card-row">
+                            <span className="slot-time-range">{slot.start} — {slot.end}</span>
+                            <span className="slot-duration-badge">{duration} dk</span>
+                          </div>
+                          <div className="slot-card-stats">
+                            <span className="slot-stat">💧 {slot.amount} L</span>
+                            <span className="slot-stat">⏱️ {duration} dk</span>
+                          </div>
+                          {slot.note && <p className="slot-note">{slot.note}</p>}
                         </div>
-                        <div className="slot-details">
-                          <span className="slot-amount">💧 {slot.amount} L</span>
-                          <span className="slot-duration">
-                            ⏱️ {(() => {
-                              const [sh, sm] = slot.start.split(':').map(Number);
-                              const [eh, em] = slot.end.split(':').map(Number);
-                              return (eh * 60 + em) - (sh * 60 + sm);
-                            })()} dk
-                          </span>
-                        </div>
-                        {slot.note && <span className="slot-note">{slot.note}</span>}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="schedule-empty">
-                  <span>🌿</span> Bu gün sulama planlanmamış
+                  🌿 Bu gün sulama planlanmamış — toprak dinleniyor
                 </div>
               )}
-            </div>
+            </Card>
           );
         })}
       </div>

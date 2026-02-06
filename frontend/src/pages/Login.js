@@ -48,7 +48,7 @@ const Login = () => {
         <svg width="0" height="0" style={{ position: 'absolute' }}>
           <defs>
             <clipPath id="dropClip" clipPathUnits="objectBoundingBox">
-              <path d="M 0.5 0.0 C 0.5 0.0 1.0 0.35 1.0 0.6 C 1.0 0.83 0.78 1.0 0.5 1.0 C 0.22 1.0 0.0 0.83 0.0 0.6 C 0.0 0.35 0.5 0.0 0.5 0.0 Z" />
+              <path d="M 0.5 0.0 C 0.5 0.0 1.0 0.3 1.0 0.55 C 1.0 0.8 0.78 1.0 0.5 1.0 C 0.22 1.0 0.0 0.8 0.0 0.55 C 0.0 0.3 0.5 0.0 0.5 0.0 Z" />
             </clipPath>
           </defs>
         </svg>
@@ -130,10 +130,6 @@ const Login = () => {
                 {loading ? '💧 Giriş yapılıyor...' : (isRegister ? 'Kayıt Ol' : 'Giriş Yap')}
               </button>
             </form>
-
-            <div className={`fill-indicator ${fillPercent >= 80 ? 'full' : ''}`}>
-              💧 %{loading ? 100 : fillPercent}
-            </div>
           </div>
           </div>
         </div>
