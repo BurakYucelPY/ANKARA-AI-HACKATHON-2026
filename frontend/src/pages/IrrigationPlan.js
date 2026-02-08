@@ -86,10 +86,10 @@ const IrrigationPlan = () => {
 
   return (
     <div className="irrigation-page">
-      <div className="irrigation-header">
-        <div>
-          <h1 className="irrigation-title">💧 Sulama Planı</h1>
-          <p className="irrigation-subtitle">Yapay zeka destekli haftalık sulama takvimi</p>
+      <div className="page-header">
+        <div className="page-header-content">
+          <h1 className="page-title">Sulama Planı</h1>
+          <p className="page-subtitle">Yapay zeka destekli haftalık sulama takvimi</p>
         </div>
       </div>
 

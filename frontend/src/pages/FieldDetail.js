@@ -1,23 +1,40 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getFields, getPlantTypes, loginUser, updateFieldPlantType } from '../services/api';
 import { getPlantImage } from '../data/plantImages';
-import Card from '../components/Card';
 import './FieldDetail.css';
 
 /**
- * FieldDetail Bileşeni
- * Single Responsibility: Tarla detaylarını gösterme ve bitki türü değiştirme
+ * FieldDetail — Modal olarak açılan tarla detay bileşeni
+ * Props: field (tarla objesi), onClose (kapatma), onFieldUpdated (güncelleme callback)
  */
-const FieldDetail = () => {
-    const { fieldId } = useParams();
+const FieldDetail = ({ field: initialField, onClose, onFieldUpdated }) => {
     const { user } = useAuth();
-    const navigate = useNavigate();
 
-    const [field, setField] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [field, setField] = useState(initialField);
     const [plantTypes, setPlantTypes] = useState([]);
+
+    // Hardcoded veriler (backend hazır olunca API'den gelecek)
+    const FIELD_AREAS = {
+        'Polatlı Buğday Tarlası': 50000,
+        'Ayaş Domates Serası': 5000,
+        'Haymana Ayçiçeği Tarlası': 80000,
+        'Çubuk Patates Tarlası': 30000,
+        'Beypazarı Biber Bahçesi': 15000,
+        'Kalecik Çilek Bahçesi': 8000,
+        'Şereflikoçhisar Soğan Tarlası': 40000,
+        'Nallıhan Mısır Tarlası': 60000,
+    };
+    const PLANT_ECONOMICS = {
+        'Domates': { yieldPerDonum: 5500, pricePerKg: 12 },
+        'Buğday': { yieldPerDonum: 500, pricePerKg: 9 },
+        'Ayçiçeği': { yieldPerDonum: 250, pricePerKg: 20 },
+        'Patates': { yieldPerDonum: 3500, pricePerKg: 10 },
+        'Kapya Biber': { yieldPerDonum: 3500, pricePerKg: 20 },
+        'Çilek': { yieldPerDonum: 2000, pricePerKg: 45 },
+        'Soğan': { yieldPerDonum: 4000, pricePerKg: 8 },
+        'Mısır': { yieldPerDonum: 1000, pricePerKg: 8.5 },
+    };
 
     // Bitki değiştirme state'leri
     const [showChangePlant, setShowChangePlant] = useState(false);
@@ -29,38 +46,31 @@ const FieldDetail = () => {
     const [changeSuccess, setChangeSuccess] = useState('');
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchPlantTypes = async () => {
             try {
-                const [fieldsRes, plantTypesRes] = await Promise.all([
-                    getFields(user.id),
-                    getPlantTypes()
-                ]);
-                const found = fieldsRes.data.find(f => f.id === parseInt(fieldId));
-                setField(found || null);
-                setPlantTypes(plantTypesRes.data);
+                const res = await getPlantTypes();
+                setPlantTypes(res.data);
             } catch (err) {
-                console.error('Veriler yüklenemedi:', err);
-            } finally {
-                setLoading(false);
+                console.error('Bitki türleri yüklenemedi:', err);
             }
         };
-        fetchData();
-    }, [user.id, fieldId]);
+        fetchPlantTypes();
+    }, []);
 
     // Sensör verileri
-    const getLastSensorData = (field) => {
-        const logs = field.sensor_logs || [];
+    const getLastSensorData = (f) => {
+        const logs = f.sensor_logs || [];
         if (logs.length === 0) return { moisture: '-', temperature: '-', timestamp: null };
         const last = logs[logs.length - 1];
         return { moisture: last.moisture, temperature: last.temperature, timestamp: last.timestamp };
     };
 
-    const getFieldStatus = (field) => {
-        const logs = field.sensor_logs || [];
+    const getFieldStatus = (f) => {
+        const logs = f.sensor_logs || [];
         if (logs.length === 0) return 'normal';
         const lastLog = logs[logs.length - 1];
         const moisture = lastLog.moisture;
-        const pt = field.plant_type;
+        const pt = f.plant_type;
         if (!pt) return moisture < 30 ? 'critical' : moisture < 50 ? 'warning' : 'normal';
         if (moisture < pt.critical_moisture) return 'critical';
         if (moisture < pt.min_moisture) return 'warning';
@@ -85,7 +95,24 @@ const FieldDetail = () => {
         return 'var(--danger)';
     };
 
-    // Bitki değiştirme: Seçim yaptıktan sonra şifre sor
+    const handleModalMove = (e) => {
+        const modal = e.currentTarget;
+        const rect = modal.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        const tiltX = (-y * 6).toFixed(2);
+        const tiltY = (x * 6).toFixed(2);
+        modal.style.setProperty('--tilt-x', `${tiltX}deg`);
+        modal.style.setProperty('--tilt-y', `${tiltY}deg`);
+    };
+
+    const handleModalLeave = (e) => {
+        const modal = e.currentTarget;
+        modal.style.setProperty('--tilt-x', '0deg');
+        modal.style.setProperty('--tilt-y', '0deg');
+    };
+
+    // Bitki değiştirme
     const handlePlantSelect = (plantId) => {
         if (parseInt(plantId) === field.plant_type?.id) {
             setChangeError('Zaten bu bitki türü ekili.');
@@ -96,17 +123,13 @@ const FieldDetail = () => {
         setShowPasswordConfirm(true);
     };
 
-    // Şifre doğrula ve bitki değiştir
     const handleConfirmChange = async (e) => {
         e.preventDefault();
         setChangeError('');
         setChangingPlant(true);
 
         try {
-            // 1. Şifre doğrula (login endpoint ile)
             await loginUser(user.email, password);
-
-            // 2. Bitki türünü güncelle
             await updateFieldPlantType(user.id, field.id, parseInt(selectedPlantId));
 
             const newPlant = plantTypes.find(pt => pt.id === parseInt(selectedPlantId));
@@ -117,14 +140,15 @@ const FieldDetail = () => {
 
             // Veriyi yeniden çek
             const fieldsRes = await getFields(user.id);
-            const found = fieldsRes.data.find(f => f.id === parseInt(fieldId));
-            setField(found || field);
+            const found = fieldsRes.data.find(f => f.id === field.id);
+            if (found) setField(found);
+            if (onFieldUpdated) onFieldUpdated();
 
         } catch (err) {
             if (err.response?.status === 401) {
                 setChangeError('Şifre yanlış! Lütfen tekrar deneyin.');
             } else if (err.response?.status === 404 || err.response?.status === 405) {
-                setChangeError('Backend endpoint henüz hazır değil. Arkadaşına PUT /users/{id}/fields/{id}/plant-type endpoint eklemesini söyle.');
+                setChangeError('Backend endpoint henüz hazır değil.');
             } else {
                 setChangeError('Bir hata oluştu. Lütfen tekrar deneyin.');
             }
@@ -139,31 +163,6 @@ const FieldDetail = () => {
         setChangeError('');
         setSelectedPlantId('');
     };
-
-    if (loading) {
-        return (
-            <div className="field-detail-page">
-                <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--gray-400)' }}>
-                    <p style={{ fontSize: '2rem' }}>⏳</p>
-                    <p>Tarla bilgileri yükleniyor...</p>
-                </div>
-            </div>
-        );
-    }
-
-    if (!field) {
-        return (
-            <div className="field-detail-page">
-                <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--gray-400)' }}>
-                    <p style={{ fontSize: '2rem' }}>❌</p>
-                    <p>Tarla bulunamadı.</p>
-                    <button className="btn btn-primary" onClick={() => navigate('/fields')} style={{ marginTop: '1rem' }}>
-                        ← Tarlalarıma Dön
-                    </button>
-                </div>
-            </div>
-        );
-    }
 
     const sensor = getLastSensorData(field);
     const status = getFieldStatus(field);
@@ -181,179 +180,220 @@ const FieldDetail = () => {
     const statusBadge = statusConfig[status] || statusConfig.normal;
 
     return (
-        <div className="field-detail-page">
-            {/* Geri butonu + Başlık */}
-            <div className="detail-header">
-                <button className="detail-back-btn" onClick={() => navigate('/fields')}>
-                    ← Geri
-                </button>
-                <div className="detail-title-section">
-                    <h1 className="detail-title">{field.name}</h1>
-                    <p className="detail-subtitle">📍 {field.location}, {field.ilce}</p>
-                </div>
-                <span className={`badge ${statusBadge.class}`}>{statusBadge.label}</span>
-            </div>
-
-            {/* Bitki Banner */}
+        <div className="field-detail-overlay" onClick={onClose}>
             <div
-                className="detail-plant-banner"
-                style={{
-                    backgroundImage: `linear-gradient(90deg, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.4) 100%), url(${plantImage.image})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
-                }}
+                className="field-detail-modal"
+                onClick={(e) => e.stopPropagation()}
+                onMouseMove={handleModalMove}
+                onMouseLeave={handleModalLeave}
             >
-                <div className="detail-plant-info">
-                    <span className="detail-plant-label">Ekili Bitki</span>
-                    <span className="detail-plant-name">{field.plant_type?.name || 'Bilinmiyor'}</span>
-                </div>
-                <button
-                    className="btn btn-sm detail-change-plant-btn"
-                    onClick={() => {
-                        setShowChangePlant(!showChangePlant);
-                        setChangeError('');
-                        setChangeSuccess('');
-                        setShowPasswordConfirm(false);
+                <button className="modal-close" onClick={onClose}>✕</button>
+
+                {/* Banner Header */}
+                <div
+                    className="detail-banner-header"
+                    style={{
+                        backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.75)), url(${plantImage.image})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
                     }}
                 >
-                    ✏️ Bitki Değiştir
-                </button>
-            </div>
-
-            {/* Başarı mesajı */}
-            {changeSuccess && (
-                <div className="detail-success-msg">
-                    ✅ {changeSuccess}
+                    <div className="detail-title-section">
+                        <h2 className="detail-title">{field.name}</h2>
+                        <span className="detail-subtitle">{field.location}, {field.ilce}</span>
+                    </div>
+                    <span className={`badge ${statusBadge.class}`}>{statusBadge.label}</span>
                 </div>
-            )}
 
-            {/* Bitki Değiştirme Paneli */}
-            {showChangePlant && !showPasswordConfirm && (
-                <Card className="detail-change-panel">
-                    <div className="change-panel-header">
-                        <h3>⚠️ Bitki Türünü Değiştir</h3>
-                        <p className="change-warning">
-                            Bitki türünü değiştirmek, tüm sulama planlarını, nem eşik değerlerini ve yapay zeka tahminlerini sıfırlayacaktır. 
-                            Bu işlem geri alınamaz.
-                        </p>
+                {/* Modal Content */}
+                <div className="detail-content">
+                    {/* Bitki Bilgisi */}
+                    <div className="detail-plant-row">
+                        <div className="detail-plant-info">
+                            <span className="detail-plant-label">Ekili Bitki</span>
+                            <span className="detail-plant-name">{field.plant_type?.name || 'Bilinmiyor'}</span>
+                        </div>
+                        <button
+                            className="detail-change-plant-btn"
+                            onClick={() => {
+                                setShowChangePlant(!showChangePlant);
+                                setChangeError('');
+                                setChangeSuccess('');
+                                setShowPasswordConfirm(false);
+                            }}
+                        >
+                            Bitki Değiştir
+                        </button>
                     </div>
-                    <div className="plant-type-grid">
-                        {plantTypes.map((pt) => {
-                            const ptImage = getPlantImage(pt.name);
-                            const isCurrent = pt.id === field.plant_type?.id;
-                            return (
-                                <button
-                                    key={pt.id}
-                                    className={`plant-type-option ${isCurrent ? 'current' : ''}`}
-                                    onClick={() => !isCurrent && handlePlantSelect(pt.id)}
-                                    disabled={isCurrent}
-                                    style={{
-                                        backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.5)), url(${ptImage.image})`,
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center',
-                                    }}
-                                >
-                                    <span className="plant-type-name">{pt.name}</span>
-                                    {isCurrent && <span className="plant-type-current-badge">Mevcut</span>}
-                                </button>
-                            );
-                        })}
-                    </div>
-                    {changeError && <p className="change-error">{changeError}</p>}
-                </Card>
-            )}
 
-            {/* Şifre Onay Modalı */}
-            {showPasswordConfirm && (
-                <div className="password-overlay" onClick={handleCancelChange}>
-                    <div className="password-modal" onClick={(e) => e.stopPropagation()}>
-                        <div className="password-modal-header">
-                            <span className="password-modal-icon">🔒</span>
-                            <h3>Güvenlik Doğrulaması</h3>
-                        </div>
-                        <div className="password-modal-warning">
-                            <p>⚠️ Bitki türünü <strong>"{plantTypes.find(pt => pt.id === parseInt(selectedPlantId))?.name}"</strong> olarak değiştirmek üzeresiniz.</p>
-                            <p>Bu işlem tüm sulama ayarlarını etkileyecektir. Devam etmek için şifrenizi girin.</p>
-                        </div>
-                        <form onSubmit={handleConfirmChange}>
-                            <div className="password-input-group">
-                                <label>Şifreniz</label>
-                                <input
-                                    type="password"
-                                    className="input"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="Şifrenizi girin..."
-                                    required
-                                    autoFocus
-                                />
+                    {/* Başarı mesajı */}
+                    {changeSuccess && (
+                        <div className="detail-success-msg">{changeSuccess}</div>
+                    )}
+
+                    {/* Bitki Değiştirme Paneli */}
+                    {showChangePlant && !showPasswordConfirm && (
+                        <div className="detail-change-panel">
+                            <div className="change-panel-header">
+                                <h3>Bitki Türünü Değiştir</h3>
+                                <p className="change-warning">
+                                    Bitki türünü değiştirmek, tüm sulama planlarını, nem eşik değerlerini ve yapay zeka tahminlerini sıfırlayacaktır.
+                                    Bu işlem geri alınamaz.
+                                </p>
+                            </div>
+                            <div className="plant-type-grid">
+                                {plantTypes.map((pt) => {
+                                    const ptImage = getPlantImage(pt.name);
+                                    const isCurrent = pt.id === field.plant_type?.id;
+                                    return (
+                                        <button
+                                            key={pt.id}
+                                            className={`plant-type-option ${isCurrent ? 'current' : ''}`}
+                                            onClick={() => !isCurrent && handlePlantSelect(pt.id)}
+                                            disabled={isCurrent}
+                                            style={{
+                                                backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.5)), url(${ptImage.image})`,
+                                                backgroundSize: 'cover',
+                                                backgroundPosition: 'center',
+                                            }}
+                                        >
+                                            <span className="plant-type-name">{pt.name}</span>
+                                            {isCurrent && <span className="plant-type-current-badge">Mevcut</span>}
+                                        </button>
+                                    );
+                                })}
                             </div>
                             {changeError && <p className="change-error">{changeError}</p>}
-                            <div className="password-modal-actions">
-                                <button type="button" className="btn btn-secondary" onClick={handleCancelChange}>
-                                    İptal
-                                </button>
-                                <button type="submit" className="btn btn-danger" disabled={changingPlant || !password}>
-                                    {changingPlant ? 'Doğrulanıyor...' : '🔓 Onayla ve Değiştir'}
-                                </button>
+                        </div>
+                    )}
+
+                    {/* Sensör Verileri */}
+                    <div className="info-grid">
+                        {/* Alan Bilgisi */}
+                        {FIELD_AREAS[field.name] && (
+                            <div className="info-card">
+                                <div className="info-details">
+                                    <span className="info-label">Tarla Alanı</span>
+                                    <span className="info-value">
+                                        {(FIELD_AREAS[field.name] / 1000) % 1 === 0
+                                            ? (FIELD_AREAS[field.name] / 1000)
+                                            : (FIELD_AREAS[field.name] / 1000).toFixed(1)} dönüm
+                                        <span className="info-sub">({FIELD_AREAS[field.name].toLocaleString('tr-TR')} m²)</span>
+                                    </span>
+                                </div>
                             </div>
-                        </form>
+                        )}
+
+                        {/* Tahmini Gelir */}
+                        {FIELD_AREAS[field.name] && PLANT_ECONOMICS[field.plant_type?.name] && (
+                            <div className="info-card info-card-income">
+                                <div className="info-details">
+                                    <span className="info-label">Tahmini Gelir</span>
+                                    <span className="info-value info-value-income">
+                                        ₺{((FIELD_AREAS[field.name] / 1000) * PLANT_ECONOMICS[field.plant_type.name].yieldPerDonum * PLANT_ECONOMICS[field.plant_type.name].pricePerKg).toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
+                                    </span>
+                                </div>
+                                <div className="income-breakdown">
+                                    <span>{(FIELD_AREAS[field.name] / 1000).toFixed(1)} dönüm × {PLANT_ECONOMICS[field.plant_type.name].yieldPerDonum} kg/dönüm × ₺{PLANT_ECONOMICS[field.plant_type.name].pricePerKg}/kg</span>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="info-card">
+                            <div className="info-details">
+                                <span className="info-label">Nem</span>
+                                <span className="info-value" style={{ color: getMoistureColor(moisture) }}>
+                                    {moisture !== '-' ? `%${moisture}` : 'Veri yok'}
+                                </span>
+                            </div>
+                            {moisture !== '-' && (
+                                <div className="detail-progress-bar">
+                                    <div
+                                        className="detail-progress-fill"
+                                        style={{ width: `${moistureNum}%`, background: getMoistureColor(moisture) }}
+                                    ></div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="info-card">
+                            <div className="info-details">
+                                <span className="info-label">Sıcaklık</span>
+                                <span className="info-value" style={{ color: 'var(--info)' }}>
+                                    {sensor.temperature !== '-' ? `${sensor.temperature}°C` : 'Veri yok'}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="info-card">
+                            <div className="info-details">
+                                <span className="info-label">Pompa Debisi</span>
+                                <span className="info-value">{field.pump_flow_rate} L/dk</span>
+                            </div>
+                        </div>
+
+                        <div className="info-card">
+                            <div className="info-details">
+                                <span className="info-label">Su Birim Fiyatı</span>
+                                <span className="info-value">₺{field.water_unit_price}/L</span>
+                            </div>
+                        </div>
+
+                        {field.plant_type && (
+                            <div className="info-card full-width">
+                                <div className="info-details">
+                                    <span className="info-label">Nem Eşikleri</span>
+                                    <span className="info-value">
+                                        Kritik: %{field.plant_type.critical_moisture} · Min: %{field.plant_type.min_moisture} · Max: %{field.plant_type.max_moisture}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Son Veri */}
+                    <div className="detail-footer">
+                        <span className="detail-footer-text">Son veri: {formatTimestamp(sensor.timestamp)}</span>
                     </div>
                 </div>
-            )}
 
-            {/* Sensör Verileri */}
-            <div className="detail-grid">
-                <Card className="detail-sensor-card">
-                    <h3 className="detail-card-title">💧 Nem Durumu</h3>
-                    <div className="detail-sensor-big">
-                        <span className="detail-big-value" style={{ color: getMoistureColor(moisture) }}>
-                            {moisture !== '-' ? `%${moisture}` : 'Veri yok'}
-                        </span>
-                        {moisture !== '-' && (
-                            <div className="detail-progress-bar">
-                                <div
-                                    className="detail-progress-fill"
-                                    style={{ width: `${moistureNum}%`, background: getMoistureColor(moisture) }}
-                                ></div>
+                {/* Şifre Onay Modalı */}
+                {showPasswordConfirm && (
+                    <div className="password-overlay" onClick={handleCancelChange}>
+                        <div className="password-modal" onClick={(e) => e.stopPropagation()}>
+                            <div className="password-modal-header">
+                                <h3>Güvenlik Doğrulaması</h3>
                             </div>
-                        )}
-                        {field.plant_type && (
-                            <div className="detail-thresholds">
-                                <span>Kritik: %{field.plant_type.critical_moisture}</span>
-                                <span>Min: %{field.plant_type.min_moisture}</span>
-                                <span>Max: %{field.plant_type.max_moisture}</span>
+                            <div className="password-modal-warning">
+                                <p>Bitki türünü <strong>"{plantTypes.find(pt => pt.id === parseInt(selectedPlantId))?.name}"</strong> olarak değiştirmek üzeresiniz.</p>
+                                <p>Bu işlem tüm sulama ayarlarını etkileyecektir. Devam etmek için şifrenizi girin.</p>
                             </div>
-                        )}
-                    </div>
-                </Card>
-
-                <Card className="detail-sensor-card">
-                    <h3 className="detail-card-title">🌡️ Sıcaklık</h3>
-                    <div className="detail-sensor-big">
-                        <span className="detail-big-value" style={{ color: 'var(--info)' }}>
-                            {sensor.temperature !== '-' ? `${sensor.temperature}°C` : 'Veri yok'}
-                        </span>
-                    </div>
-                </Card>
-
-                <Card className="detail-sensor-card">
-                    <h3 className="detail-card-title">📊 Tarla Bilgileri</h3>
-                    <div className="detail-info-list">
-                        <div className="detail-info-row">
-                            <span className="detail-info-label">Pompa Debisi</span>
-                            <span className="detail-info-value">{field.pump_flow_rate} L/dk</span>
-                        </div>
-                        <div className="detail-info-row">
-                            <span className="detail-info-label">Su Birim Fiyatı</span>
-                            <span className="detail-info-value">₺{field.water_unit_price}/L</span>
-                        </div>
-                        <div className="detail-info-row">
-                            <span className="detail-info-label">Son Veri</span>
-                            <span className="detail-info-value">{formatTimestamp(sensor.timestamp)}</span>
+                            <form onSubmit={handleConfirmChange}>
+                                <div className="password-input-group">
+                                    <label>Şifreniz</label>
+                                    <input
+                                        type="password"
+                                        className="input"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="Şifrenizi girin..."
+                                        required
+                                        autoFocus
+                                    />
+                                </div>
+                                {changeError && <p className="change-error">{changeError}</p>}
+                                <div className="password-modal-actions">
+                                    <button type="button" className="btn btn-secondary" onClick={handleCancelChange}>
+                                        İptal
+                                    </button>
+                                    <button type="submit" className="btn btn-danger" disabled={changingPlant || !password}>
+                                        {changingPlant ? 'Doğrulanıyor...' : 'Onayla ve Değiştir'}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                </Card>
+                )}
             </div>
         </div>
     );

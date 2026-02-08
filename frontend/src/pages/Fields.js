@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getFields } from '../services/api';
 import { getPlantImage } from '../data/plantImages';
 import Card from '../components/Card';
+import LoadingScreen from '../components/LoadingScreen';
+import FieldDetail from './FieldDetail';
 import './Fields.css';
 
 const Fields = () => {
     const { user } = useAuth();
-    const navigate = useNavigate();
     const [fields, setFields] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedField, setSelectedField] = useState(null);
 
     const fetchFields = async () => {
         try {
@@ -75,19 +76,60 @@ const Fields = () => {
         return date.toLocaleDateString('tr-TR');
     };
 
+    // Hardcoded tarla alanları (backend hazır olunca API’den gelecek)
+    const FIELD_AREAS = {
+        'Polatlı Buğday Tarlası': 50000,
+        'Ayaş Domates Serası': 5000,
+        'Haymana Ayçiçeği Tarlası': 80000,
+        'Çubuk Patates Tarlası': 30000,
+        'Beypazarı Biber Bahçesi': 15000,
+        'Kalecik Çilek Bahçesi': 8000,
+        'Şereflikoçhisar Soğan Tarlası': 40000,
+        'Nallıhan Mısır Tarlası': 60000,
+    };
+
+    // Hardcoded bitki verim & fiyat (backend hazır olunca API’den gelecek)
+    const PLANT_ECONOMICS = {
+        'Domates': { yieldPerDonum: 5500, pricePerKg: 12 },
+        'Buğday': { yieldPerDonum: 500, pricePerKg: 9 },
+        'Ayçiçeği': { yieldPerDonum: 250, pricePerKg: 20 },
+        'Patates': { yieldPerDonum: 3500, pricePerKg: 10 },
+        'Kapya Biber': { yieldPerDonum: 3500, pricePerKg: 20 },
+        'Çilek': { yieldPerDonum: 2000, pricePerKg: 45 },
+        'Soğan': { yieldPerDonum: 4000, pricePerKg: 8 },
+        'Mısır': { yieldPerDonum: 1000, pricePerKg: 8.5 },
+    };
+
+    const getFieldArea = (field) => {
+        const areaM2 = FIELD_AREAS[field.name];
+        if (!areaM2) return null;
+        const donum = areaM2 / 1000;
+        return { m2: areaM2.toLocaleString('tr-TR'), donum: donum % 1 === 0 ? donum : donum.toFixed(1), raw: areaM2 };
+    };
+
+    const calcEstimatedIncome = (field) => {
+        const area = getFieldArea(field);
+        const plantName = field.plant_type?.name;
+        const eco = PLANT_ECONOMICS[plantName];
+        if (!area || !eco) return null;
+        const donum = area.raw / 1000;
+        return donum * eco.yieldPerDonum * eco.pricePerKg;
+    };
+
+    const formatCurrency = (val) => {
+        if (val == null) return null;
+        if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
+        if (val >= 1000) return `${(val / 1000).toFixed(0)}K`;
+        return val.toLocaleString('tr-TR');
+    };
+
     if (loading) {
         return (
             <div className="fields-page">
-                <div className="page-header">
-                    <div className="page-header-content">
-                        <h1 className="page-title">🌾 Tarlalarım</h1>
-                        <p className="page-subtitle">Veriler yükleniyor...</p>
-                    </div>
-                </div>
-                <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--gray-400)' }}>
-                    <p style={{ fontSize: '2rem' }}>⏳</p>
-                    <p>Tarla bilgileri yükleniyor...</p>
-                </div>
+                <LoadingScreen
+                    title="Tarlalarım"
+                    subtitle="Tarla bilgileri yükleniyor..."
+                />
             </div>
         );
     }
@@ -99,13 +141,14 @@ const Fields = () => {
     });
 
     const optimalCount = enrichedFields.filter(f => f.status === 'optimal').length;
+    const normalCount = enrichedFields.filter(f => f.status === 'normal').length;
     const alertCount = enrichedFields.filter(f => f.status === 'critical' || f.status === 'warning').length;
 
     return (
         <div className="fields-page">
             <div className="page-header">
                 <div className="page-header-content">
-                    <h1 className="page-title">🌾 Tarlalarım</h1>
+                    <h1 className="page-title">Tarlalarım</h1>
                     <p className="page-subtitle">Tarlalarınızın durumunu ve sensör verilerini takip edin</p>
                 </div>
             </div>
@@ -116,13 +159,13 @@ const Fields = () => {
                     <span className="summary-value">{enrichedFields.length}</span>
                     <span className="summary-label">Toplam Tarla</span>
                 </div>
-                <div className="summary-item">
-                    <span className="summary-value">{enrichedFields.length}</span>
-                    <span className="summary-label">Kayıtlı Tarla</span>
-                </div>
-                <div className="summary-item">
+                <div className="summary-item summary-optimal">
                     <span className="summary-value">{optimalCount}</span>
-                    <span className="summary-label">Optimal Durumda</span>
+                    <span className="summary-label">Optimal</span>
+                </div>
+                <div className="summary-item summary-normal">
+                    <span className="summary-value">{normalCount}</span>
+                    <span className="summary-label">Normal</span>
                 </div>
                 <div className="summary-item summary-warning">
                     <span className="summary-value">{alertCount}</span>
@@ -154,7 +197,7 @@ const Fields = () => {
                             <div
                                 key={field.id}
                                 className={`field-card field-${field.status}`}
-                                onClick={() => navigate(`/fields/${field.id}`)}
+                                onClick={() => setSelectedField(field)}
                                 style={{ cursor: 'pointer' }}
                             >
                                 <div className="field-header">
@@ -208,13 +251,40 @@ const Fields = () => {
                                     </div>
                                 </div>
 
+                                {/* Alan & Tahmini Gelir */}
+                                {(getFieldArea(field) || calcEstimatedIncome(field)) && (
+                                    <div className="field-extra-info">
+                                        {getFieldArea(field) && (
+                                            <div className="extra-info-item">
+                                                <span className="extra-info-label">Alan</span>
+                                                <span className="extra-info-value">{getFieldArea(field).donum} dönüm</span>
+                                            </div>
+                                        )}
+                                        {calcEstimatedIncome(field) && (
+                                            <div className="extra-info-item extra-info-income">
+                                                <span className="extra-info-label">Tah. Gelir</span>
+                                                <span className="extra-info-value">₺{formatCurrency(calcEstimatedIncome(field))}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
                                 <div className="field-footer">
-                                    <span className="last-watered">💧 Son veri: {formatTimestamp(field.sensorData.timestamp)}</span>
+                                    <span className="last-watered">Son veri: {formatTimestamp(field.sensorData.timestamp)}</span>
                                 </div>
                             </div>
                         );
                     })}
                 </div>
+            )}
+
+            {/* Tarla Detay Modal */}
+            {selectedField && (
+                <FieldDetail
+                    field={selectedField}
+                    onClose={() => setSelectedField(null)}
+                    onFieldUpdated={() => fetchFields()}
+                />
             )}
         </div>
     );

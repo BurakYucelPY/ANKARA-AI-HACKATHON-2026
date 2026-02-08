@@ -4,6 +4,8 @@
 .page-container {
     max-width: 1400px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
 /* Özel scrollbar */
@@ -13,20 +15,28 @@
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--gray-800);
+    background: rgba(255, 255, 255, 0.04);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--gray-600);
+    background: rgba(148, 163, 184, 0.4);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--gray-500);
+    background: rgba(148, 163, 184, 0.6);
 }
 
 /* Seçim rengi */
 ::selection {
-    background: var(--primary-green);
+    background: var(--plant-green);
     color: white;
+}
+
+.app-loading {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6, 1.5rem);
 }

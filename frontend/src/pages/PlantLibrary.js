@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { getPlantTypes } from '../services/api';
 import { getPlantImage } from '../data/plantImages';
+import iconSearch from '../assets/icons/search.png';
 import './PlantLibrary.css';
+import LoadingScreen from '../components/LoadingScreen';
 
 const PlantLibrary = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -73,19 +75,30 @@ const PlantLibrary = () => {
         }
     };
 
+    const handleModalMove = (e) => {
+        const modal = e.currentTarget;
+        const rect = modal.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        const tiltX = (-y * 6).toFixed(2);
+        const tiltY = (x * 6).toFixed(2);
+        modal.style.setProperty('--tilt-x', `${tiltX}deg`);
+        modal.style.setProperty('--tilt-y', `${tiltY}deg`);
+    };
+
+    const handleModalLeave = (e) => {
+        const modal = e.currentTarget;
+        modal.style.setProperty('--tilt-x', '0deg');
+        modal.style.setProperty('--tilt-y', '0deg');
+    };
+
     if (loading) {
         return (
             <div className="plant-library">
-                <div className="page-header">
-                    <div className="page-header-content">
-                        <h1 className="page-title">🌱 Bitki Kütüphanesi</h1>
-                        <p className="page-subtitle">Veriler yükleniyor...</p>
-                    </div>
-                </div>
-                <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--gray-400)' }}>
-                    <p style={{ fontSize: '2rem' }}>⏳</p>
-                    <p>Bitki bilgileri yükleniyor...</p>
-                </div>
+                <LoadingScreen
+                    title="Bitki Kütüphanesi"
+                    subtitle="Bitki bilgileri yükleniyor..."
+                />
             </div>
         );
     }
@@ -94,17 +107,18 @@ const PlantLibrary = () => {
         <div className="plant-library">
             <div className="page-header">
                 <div className="page-header-content">
-                    <h1 className="page-title">🌱 Bitki Kütüphanesi</h1>
+                    <h1 className="page-title">Bitki Kütüphanesi</h1>
                     <p className="page-subtitle">Bitkiler hakkında detaylı bilgi edinin</p>
                 </div>
             </div>
 
             {/* Arama */}
             <div className="search-container">
+                <img className="search-icon" src={iconSearch} alt="" aria-hidden="true" />
                 <input
                     type="text"
                     className="input search-input"
-                    placeholder="🔍 Bitki ara..."
+                    placeholder="Bitki ara..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -148,7 +162,12 @@ const PlantLibrary = () => {
             {/* Detay Modal */}
             {selectedPlant && (
                 <div className="plant-modal-overlay" onClick={() => setSelectedPlant(null)}>
-                    <div className="plant-modal" onClick={(e) => e.stopPropagation()}>
+                    <div
+                        className="plant-modal"
+                        onClick={(e) => e.stopPropagation()}
+                        onMouseMove={handleModalMove}
+                        onMouseLeave={handleModalLeave}
+                    >
                         <button className="modal-close" onClick={() => setSelectedPlant(null)}>✕</button>
 
                         <div
@@ -168,7 +187,7 @@ const PlantLibrary = () => {
                         <div className="modal-content">
                             <div className="info-grid">
                                 <div className="info-card">
-                                    <span className="info-icon">📅</span>
+                                    <span className="info-icon"></span>
                                     <div className="info-details">
                                         <span className="info-label">Ekim Zamanı</span>
                                         <span className="info-value">{selectedPlant.plantingTime}</span>
@@ -176,7 +195,7 @@ const PlantLibrary = () => {
                                 </div>
 
                                 <div className="info-card">
-                                    <span className="info-icon">🌾</span>
+                                    <span className="info-icon"></span>
                                     <div className="info-details">
                                         <span className="info-label">Hasat Zamanı</span>
                                         <span className="info-value">{selectedPlant.harvestTime}</span>
@@ -184,7 +203,7 @@ const PlantLibrary = () => {
                                 </div>
 
                                 <div className="info-card">
-                                    <span className="info-icon">💧</span>
+                                    <span className="info-icon"></span>
                                     <div className="info-details">
                                         <span className="info-label">Su İhtiyacı</span>
                                         <span className={`info-value ${getWaterNeedClass(selectedPlant.waterNeed)}`}>
@@ -194,7 +213,7 @@ const PlantLibrary = () => {
                                 </div>
 
                                 <div className="info-card">
-                                    <span className="info-icon">🌡️</span>
+                                    <span className="info-icon"></span>
                                     <div className="info-details">
                                         <span className="info-label">Sıcaklık</span>
                                         <span className="info-value">{selectedPlant.temperature}</span>
@@ -202,7 +221,7 @@ const PlantLibrary = () => {
                                 </div>
 
                                 <div className="info-card full-width">
-                                    <span className="info-icon">🌍</span>
+                                    <span className="info-icon"></span>
                                     <div className="info-details">
                                         <span className="info-label">Toprak Tipi</span>
                                         <span className="info-value">{selectedPlant.soilType}</span>
@@ -214,28 +233,28 @@ const PlantLibrary = () => {
                             {selectedPlant.min_moisture != null && (
                                 <div className="info-grid" style={{ marginTop: '1rem' }}>
                                     <div className="info-card">
-                                        <span className="info-icon">💦</span>
+                                        <span className="info-icon"></span>
                                         <div className="info-details">
                                             <span className="info-label">Min Nem</span>
                                             <span className="info-value">%{selectedPlant.min_moisture}</span>
                                         </div>
                                     </div>
                                     <div className="info-card">
-                                        <span className="info-icon">💦</span>
+                                        <span className="info-icon"></span>
                                         <div className="info-details">
                                             <span className="info-label">Max Nem</span>
                                             <span className="info-value">%{selectedPlant.max_moisture}</span>
                                         </div>
                                     </div>
                                     <div className="info-card">
-                                        <span className="info-icon">🚨</span>
+                                        <span className="info-icon"></span>
                                         <div className="info-details">
                                             <span className="info-label">Kritik Nem</span>
                                             <span className="info-value">%{selectedPlant.critical_moisture}</span>
                                         </div>
                                     </div>
                                     <div className="info-card">
-                                        <span className="info-icon">⏱️</span>
+                                        <span className="info-icon"></span>
                                         <div className="info-details">
                                             <span className="info-label">Maks Bekleme</span>
                                             <span className="info-value">{selectedPlant.max_wait_hours} saat</span>
@@ -245,7 +264,7 @@ const PlantLibrary = () => {
                             )}
 
                             <div className="tips-section">
-                                <h4>💡 Yetiştirme İpuçları</h4>
+                                <h4>Yetiştirme İpuçları</h4>
                                 <ul className="tips-list">
                                     {selectedPlant.tips.map((tip, index) => (
                                         <li key={index}>{tip}</li>

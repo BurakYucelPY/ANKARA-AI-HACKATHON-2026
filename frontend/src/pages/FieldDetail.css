@@ -1,125 +1,182 @@
 /* ===========================
-   FieldDetail — Tarla Detay
+   FieldDetail — Tarla Detay Modal
    =========================== */
 
-.field-detail-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-/* — Başlık Bölümü — */
-.detail-header {
+/* Overlay — plant-modal-overlay ile birebir aynı */
+.field-detail-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(6, 10, 18, 0.75);
+    backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
+    justify-content: center;
+    z-index: 2000;
+    padding: var(--space-6, 1.5rem);
+    animation: fadeIn 0.3s ease;
 }
 
-.detail-back-btn {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--gray-300);
-    padding: 0.5rem 1rem;
-    border-radius: 0.75rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.2s;
-    white-space: nowrap;
+/* Modal Kart — plant-modal ile birebir aynı */
+.field-detail-modal {
+    background: #0b1220;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg, 1rem);
+    width: 100%;
+    max-width: 720px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: modalPop 0.3s ease;
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    transform: perspective(1000px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+    transform-style: preserve-3d;
+    transition: transform 0.15s ease;
+    will-change: transform;
 }
-.detail-back-btn:hover {
-    background: rgba(255, 255, 255, 0.12);
-    color: var(--gray-100);
+
+/* Kapatma Butonu — modal-close ile aynı */
+.field-detail-modal .modal-close {
+    position: absolute;
+    top: var(--space-4, 1rem);
+    right: var(--space-4, 1rem);
+    background: rgba(255, 255, 255, 0.06);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+}
+.field-detail-modal .modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Banner Header — modal-header ile aynı yapı */
+.detail-banner-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4, 1rem);
+    padding: var(--space-6, 1.5rem);
+    border-radius: var(--radius-lg, 1rem) var(--radius-lg, 1rem) 0 0;
+    position: relative;
+    min-height: 150px;
 }
 
 .detail-title-section {
-    flex: 1;
-    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 .detail-title {
     font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--gray-100);
+    font-weight: 600;
+    color: #fff;
     margin: 0;
-    line-height: 1.2;
+    letter-spacing: -0.01em;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 .detail-subtitle {
-    color: var(--gray-400);
-    font-size: 0.9rem;
-    margin: 0.25rem 0 0 0;
+    color: var(--gray-300);
+    font-size: 0.85rem;
 }
 
-/* — Bitki Banner — */
-.detail-plant-banner {
+/* Badge */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    border: 1px solid;
+    flex-shrink: 0;
+}
+.badge-success { background: rgba(74, 222, 128, 0.1); color: var(--success); border-color: rgba(74, 222, 128, 0.2); }
+.badge-info { background: rgba(56, 189, 248, 0.1); color: var(--info); border-color: rgba(56, 189, 248, 0.2); }
+.badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); border-color: rgba(245, 158, 11, 0.2); }
+.badge-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: rgba(239, 68, 68, 0.2); }
+
+/* İçerik — modal-content ile aynı */
+.detail-content {
+    padding: var(--space-5, 1.25rem);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5, 1.25rem);
+}
+
+/* Bitki satırı */
+.detail-plant-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    border-radius: 1rem;
-    padding: 1.5rem 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    min-height: 120px;
-    background-color: var(--card-bg);
+    padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md, 0.5rem);
 }
 
 .detail-plant-info {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.15rem;
 }
 .detail-plant-label {
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     color: var(--gray-400);
     font-weight: 600;
 }
 .detail-plant-name {
-    font-size: 2rem;
-    font-weight: 800;
+    font-size: 1.1rem;
+    font-weight: 600;
     color: #fff;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 
 .detail-change-plant-btn {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     color: #fff;
-    padding: 0.55rem 1.1rem;
-    border-radius: 0.75rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius-md, 0.5rem);
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
     transition: all 0.2s;
     white-space: nowrap;
-    backdrop-filter: blur(4px);
 }
 .detail-change-plant-btn:hover {
-    background: rgba(255, 255, 255, 0.22);
-    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.16);
 }
 
-/* — Başarı Mesajı — */
+/* Başarı Mesajı */
 .detail-success-msg {
-    background: rgba(74, 222, 128, 0.1);
-    border: 1px solid rgba(74, 222, 128, 0.25);
-    color: var(--success);
-    padding: 0.85rem 1.25rem;
-    border-radius: 0.75rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--gray-200);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md, 0.5rem);
     font-size: 0.9rem;
     font-weight: 500;
     text-align: center;
-    animation: fadeIn 0.3s ease;
 }
 
-/* — Bitki Değiştirme Paneli — */
+/* Bitki Değiştirme Paneli */
 .detail-change-panel {
     animation: slideDown 0.3s ease;
 }
-
 .change-panel-header h3 {
-    font-size: 1.15rem;
-    color: var(--warning);
+    font-size: 1rem;
+    color: var(--gray-200);
     margin: 0 0 0.5rem 0;
 }
 .change-warning {
@@ -127,9 +184,9 @@
     font-size: 0.85rem;
     line-height: 1.6;
     margin: 0 0 1.25rem 0;
-    background: rgba(245, 158, 11, 0.08);
-    border: 1px solid rgba(245, 158, 11, 0.15);
-    border-radius: 0.5rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md, 0.5rem);
     padding: 0.75rem 1rem;
 }
 
@@ -138,7 +195,6 @@
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 0.75rem;
 }
-
 .plant-type-option {
     position: relative;
     display: flex;
@@ -148,34 +204,33 @@
     gap: 0.25rem;
     min-height: 90px;
     border-radius: 0.75rem;
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     cursor: pointer;
     transition: all 0.25s;
     padding: 0.75rem 0.5rem;
     color: #fff;
     font-size: 0.9rem;
     font-weight: 600;
-    background-color: var(--card-bg);
+    background-color: rgba(11, 18, 32, 0.75);
 }
 .plant-type-option:hover:not(.current):not(:disabled) {
-    border-color: var(--primary);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+    border-color: rgba(56, 189, 248, 0.35);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(14, 165, 233, 0.12);
 }
 .plant-type-option.current {
     border-color: var(--success);
     opacity: 0.5;
     cursor: default;
 }
-
 .plant-type-name {
     text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
     z-index: 1;
 }
 .plant-type-current-badge {
     display: inline-block;
-    background: var(--success);
-    color: #000;
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
     font-size: 0.65rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -183,7 +238,6 @@
     border-radius: 9999px;
     z-index: 1;
 }
-
 .change-error {
     color: var(--danger);
     font-size: 0.85rem;
@@ -191,50 +245,128 @@
     text-align: center;
 }
 
-/* — Şifre Onay Modalı — */
+/* Info Grid — PlantLibrary info-grid ile aynı */
+.field-detail-modal .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4, 1rem);
+}
+.field-detail-modal .info-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: var(--space-2, 0.5rem);
+    padding: var(--space-4, 1rem) var(--space-4, 1rem);
+    background: transparent;
+    border-radius: var(--radius-md, 0.5rem);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.field-detail-modal .info-card.full-width {
+    grid-column: span 2;
+}
+.field-detail-modal .info-card-income {
+    border-color: rgba(34, 197, 94, 0.2);
+    background: rgba(34, 197, 94, 0.04);
+}
+.field-detail-modal .info-value-income {
+    color: var(--success) !important;
+    font-size: 1.25rem !important;
+}
+.field-detail-modal .info-sub {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    font-weight: 400;
+    margin-left: 6px;
+}
+.income-breakdown {
+    font-size: 0.72rem;
+    color: var(--gray-400);
+    line-height: 1.5;
+}
+.field-detail-modal .info-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gray-400);
+    font-weight: 600;
+}
+.field-detail-modal .info-value {
+    color: white;
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+.field-detail-modal .info-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Progress bar */
+.detail-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+.detail-progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.6s ease;
+}
+
+/* Footer */
+.detail-footer {
+    text-align: center;
+    padding-top: var(--space-2, 0.5rem);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.detail-footer-text {
+    color: var(--gray-500);
+    font-size: 0.8rem;
+}
+
+/* Şifre Onay Modalı */
 .password-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(6, 10, 18, 0.75);
     backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 2500;
     padding: 1rem;
     animation: fadeIn 0.2s ease;
 }
-
 .password-modal {
-    background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 1.25rem;
-    padding: 2rem;
+    background: #0b1220;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg, 1rem);
+    padding: 1.75rem;
     max-width: 420px;
     width: 100%;
     box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
     animation: modalPop 0.3s ease;
 }
-
 .password-modal-header {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     margin-bottom: 1rem;
 }
-.password-modal-icon {
-    font-size: 1.75rem;
-}
 .password-modal-header h3 {
     color: var(--gray-100);
     font-size: 1.2rem;
     margin: 0;
 }
-
 .password-modal-warning {
-    background: rgba(239, 68, 68, 0.08);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    border-radius: 0.75rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md, 0.5rem);
     padding: 0.85rem 1rem;
     margin-bottom: 1.25rem;
 }
@@ -248,9 +380,8 @@
     margin-top: 0.35rem;
 }
 .password-modal-warning strong {
-    color: var(--warning);
+    color: var(--gray-200);
 }
-
 .password-input-group {
     margin-bottom: 1rem;
 }
@@ -282,7 +413,6 @@
 .password-input-group .input::placeholder {
     color: var(--gray-500);
 }
-
 .password-modal-actions {
     display: flex;
     gap: 0.75rem;
@@ -319,103 +449,7 @@
     cursor: not-allowed;
 }
 
-/* — Sensör Grid — */
-.detail-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
-}
-
-.detail-sensor-card {
-    display: flex;
-    flex-direction: column;
-}
-.detail-card-title {
-    font-size: 0.9rem;
-    color: var(--gray-400);
-    margin: 0 0 1rem 0;
-    font-weight: 600;
-}
-
-.detail-sensor-big {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-.detail-big-value {
-    font-size: 2.5rem;
-    font-weight: 800;
-    line-height: 1;
-}
-
-.detail-progress-bar {
-    height: 8px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 9999px;
-    overflow: hidden;
-}
-.detail-progress-fill {
-    height: 100%;
-    border-radius: 9999px;
-    transition: width 0.6s ease;
-}
-
-.detail-thresholds {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.75rem;
-    color: var(--gray-500);
-}
-
-.detail-info-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-}
-.detail-info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.detail-info-label {
-    color: var(--gray-400);
-    font-size: 0.85rem;
-}
-.detail-info-value {
-    color: var(--gray-200);
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-/* — Badge — */
-.badge {
-    display: inline-block;
-    padding: 0.3rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-}
-.badge-success {
-    background: rgba(74, 222, 128, 0.15);
-    color: var(--success);
-}
-.badge-info {
-    background: rgba(56, 189, 248, 0.15);
-    color: var(--info);
-}
-.badge-warning {
-    background: rgba(245, 158, 11, 0.15);
-    color: var(--warning);
-}
-.badge-danger {
-    background: rgba(239, 68, 68, 0.15);
-    color: var(--danger);
-}
-
-/* — Animasyonlar — */
+/* Animasyonlar */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -429,39 +463,31 @@
     to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* — Responsive — */
-@media (max-width: 900px) {
-    .detail-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
+/* Responsive */
 @media (max-width: 640px) {
-    .detail-header {
+    .detail-banner-header {
         flex-direction: column;
         align-items: flex-start;
+        min-height: 120px;
     }
     .detail-title {
         font-size: 1.35rem;
     }
-    .detail-plant-banner {
+    .detail-plant-row {
         flex-direction: column;
-        text-align: center;
-        padding: 1.25rem;
+        align-items: flex-start;
+        gap: 0.75rem;
     }
-    .detail-plant-name {
-        font-size: 1.5rem;
-    }
-    .detail-grid {
+    .field-detail-modal .info-grid {
         grid-template-columns: 1fr;
+    }
+    .field-detail-modal .info-card.full-width {
+        grid-column: span 1;
     }
     .plant-type-grid {
         grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
     }
     .password-modal {
         padding: 1.25rem;
-    }
-    .detail-big-value {
-        font-size: 2rem;
     }
 }

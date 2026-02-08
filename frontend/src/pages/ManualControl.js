@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { getFields, checkIrrigation } from '../services/api';
 import Card from '../components/Card';
 import './ManualControl.css';
+import LoadingScreen from '../components/LoadingScreen';
 
 const ManualControl = () => {
     const { user } = useAuth();
@@ -73,18 +74,22 @@ const ManualControl = () => {
 
     const criticalFields = fields.filter(f => f.status === 'critical' || f.status === 'warning');
 
+    const getStatusLabel = (status) => {
+        const map = { optimal: 'Optimal', normal: 'Normal', warning: 'Dikkat', critical: 'Kritik' };
+        return map[status] || 'Normal';
+    };
+    const getStatusBadgeClass = (status) => {
+        const map = { optimal: 'badge-success', normal: 'badge-info', warning: 'badge-warning', critical: 'badge-danger' };
+        return map[status] || 'badge-info';
+    };
+
     if (loading) {
         return (
             <div className="manual-control">
-                <div className="page-header">
-                    <div className="page-header-content">
-                        <h1 className="page-title">🎛️ Manuel Yönetim</h1>
-                        <p className="page-subtitle">Veriler yükleniyor...</p>
-                    </div>
-                </div>
-                <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--gray-400)' }}>
-                    <p style={{ fontSize: '2rem' }}>⏳</p>
-                </div>
+                <LoadingScreen
+                    title="Manuel Yönetim"
+                    subtitle="Veriler yükleniyor..."
+                />
             </div>
         );
     }
@@ -93,7 +98,7 @@ const ManualControl = () => {
         <div className="manual-control">
             <div className="page-header">
                 <div className="page-header-content">
-                    <h1 className="page-title">🎛️ Manuel Yönetim</h1>
+                    <h1 className="page-title">Manuel Yönetim</h1>
                     <p className="page-subtitle">Sulama sistemini manuel olarak kontrol edin</p>
                 </div>
             </div>
@@ -122,7 +127,6 @@ const ManualControl = () => {
                             <div className="field-selector">
                                 {fields.map((field) => {
                                     const isSelected = selectedField === String(field.id);
-                                    const statusEmoji = field.status === 'optimal' ? '🟢' : field.status === 'normal' ? '🔵' : field.status === 'warning' ? '🟡' : '🔴';
                                     return (
                                         <button
                                             key={field.id}
@@ -133,7 +137,7 @@ const ManualControl = () => {
                                         >
                                             <div className="field-selector-top">
                                                 <span className="field-selector-name">{field.name}</span>
-                                                <span className="field-selector-status">{statusEmoji}</span>
+                                                <span className={`badge ${getStatusBadgeClass(field.status)}`}>{getStatusLabel(field.status)}</span>
                                             </div>
                                             <div className="field-selector-moisture">
                                                 {field.moisture !== '-' ? (
@@ -237,44 +241,6 @@ const ManualControl = () => {
                                 </span>
                             </div>
                         )}
-                    </div>
-                </Card>
-
-                {/* Tarla Durumları */}
-                <Card title="Tarla Durumları" icon="📊" className="status-panel">
-                    <div className="field-status-list">
-                        {fields.map((field) => (
-                            <div
-                                key={field.id}
-                                className={`field-status-item ${field.status} ${wateringFieldId === field.id ? 'watering' : ''}`}
-                            >
-                                <div className="field-status-info">
-                                    <span className="field-status-name">{field.name}</span>
-                                    <span className={`badge badge-${field.status === 'optimal' ? 'success' : field.status === 'normal' ? 'info' : field.status === 'warning' ? 'warning' : 'danger'}`}>
-                                        {field.status === 'optimal' ? 'Optimal' : field.status === 'normal' ? 'Normal' : field.status === 'warning' ? 'Dikkat' : 'Kritik'}
-                                    </span>
-                                </div>
-                                <div className="field-moisture">
-                                    <span className="moisture-label">Nem: {field.moisture !== '-' ? `%${field.moisture}` : 'Veri yok'}</span>
-                                    {field.moisture !== '-' && (
-                                        <div className="progress-bar">
-                                            <div
-                                                className="progress-bar-fill"
-                                                style={{
-                                                    width: `${field.moisture}%`,
-                                                    background: field.moisture >= 60 ? 'var(--success)' : field.moisture >= 40 ? 'var(--warning)' : 'var(--danger)'
-                                                }}
-                                            ></div>
-                                        </div>
-                                    )}
-                                </div>
-                                {wateringFieldId === field.id && (
-                                    <div className="field-watering-indicator">
-                                        <span>💧 Sulanıyor</span>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
                     </div>
                 </Card>
             </div>
