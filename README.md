@@ -40,64 +40,82 @@ Hava durumu servisleri "yarın yağmur yağacak" dediğinde, AquaSmart buna kör
 
 ## 🖼️ Ekran Görüntüleri
 
+### 1. Giriş Sayfası
+Su damlası formunda tasarlanmış login ekranı. Kullanıcı e-posta ve şifre yazdıkça damla dolum animasyonu çalışır.
+
 <p align="center">
   <img src="ReadMeImages/giris_sayfasi.png" alt="Giriş Sayfası" width="85%" style="border-radius: 10px;"><br/>
-  <em>Giriş Sayfası — Su damlası formunda login ekranı, yazdıkça dolum animasyonu</em>
+  <em>Giriş Sayfası</em>
 </p>
+
+### 2. Dashboard — Ana Sayfa
+Toplam kar, kazanılan su, aktif sulama durumu ve sonraki planlı sulama bilgisi tek bakışta görülür. Tüm tarlaların anlık analizi otomatik yapılır.
 
 <p align="center">
   <img src="ReadMeImages/anasayfa.png" alt="Ana Sayfa" width="85%" style="border-radius: 10px;"><br/>
-  <em>Dashboard — Toplam kar, kazanılan su, aktif sulama durumu, sonraki sulama ve tüm tarlaların anlık analizi</em>
+  <em>Dashboard</em>
 </p>
 
-<p align="center">
-  <img src="ReadMeImages/tarlalarim_sayfasi.png" alt="Tarlalarım" width="85%" style="border-radius: 10px;"><br/>
-  <em>Tarlalarım — Tüm tarlaların nem, sıcaklık, durum ve tahmini gelir bilgisi ile kartları</em>
-</p>
+### 3. Tarlalarım ve Tarla Detayı
+Tüm tarlaların nem, sıcaklık, durum badge'i ve tahmini gelir bilgisi kartlarla listelenir. Detay modalında bitki değiştirme, pompa debisi, su birim fiyatı ve nem eşikleri görüntülenir.
 
 <p align="center">
-  <img src="ReadMeImages/tarla_gorunum.png" alt="Tarla Detay" width="85%" style="border-radius: 10px;"><br/>
-  <em>Tarla Detay Modalı — Nem eşikleri, bitki değiştirme, pompa debisi, su birim fiyatı ve tahmini gelir</em>
+  <img src="ReadMeImages/tarlalarim_sayfasi.png" alt="Tarlalarım" width="48%" style="border-radius: 10px; margin-right: 10px;">
+  <img src="ReadMeImages/tarla_gorunum.png" alt="Tarla Detay" width="48%" style="border-radius: 10px;">
+  <br/>
+  <em>Tarlalarım Listesi ve Tarla Detay Modalı</em>
 </p>
+
+### 4. Hava Durumu
+Her ilçe için Open-Meteo API'den çekilen gerçek zamanlı hava verileri, animasyonlu kartlarla gösterilir. 5 günlük tahmin, don riski ve yağış uyarıları sunulur.
 
 <p align="center">
   <img src="ReadMeImages/havadurumu_sayfasi.png" alt="Hava Durumu" width="85%" style="border-radius: 10px;"><br/>
-  <em>Hava Durumu — Her ilçe için animasyonlu hava kartları ve 5 günlük tahmin</em>
+  <em>Hava Durumu Sayfası</em>
 </p>
 
-<p align="center">
-  <img src="ReadMeImages/bitki_kutuphanesi.png" alt="Bitki Kütüphanesi" width="85%" style="border-radius: 10px;"><br/>
-  <em>Bitki Kütüphanesi — 8 bitki türünün aranabilir grid görünümü</em>
-</p>
+### 5. Bitki Kütüphanesi
+8 bitki türünün aranabilir grid görünümü ve detay modalı. Ekim/hasat zamanı, su ihtiyacı, toprak tipi, nem eşikleri ve uzman yetiştirme tüyoları.
 
 <p align="center">
-  <img src="ReadMeImages/bitki_detay.png" alt="Bitki Detay" width="85%" style="border-radius: 10px;"><br/>
-  <em>Bitki Detay Modalı — Ekim/hasat zamanı, su ihtiyacı, toprak tipi, nem eşikleri ve yetiştirme ipuçları</em>
+  <img src="ReadMeImages/bitki_kutuphanesi.png" alt="Bitki Kütüphanesi" width="48%" style="border-radius: 10px; margin-right: 10px;">
+  <img src="ReadMeImages/bitki_detay.png" alt="Bitki Detay" width="48%" style="border-radius: 10px;">
+  <br/>
+  <em>Bitki Kütüphanesi ve Bitki Detay Modalı</em>
 </p>
+
+### 6. Manuel Yönetim
+Çiftçi herhangi bir tarlayı seçip süre ayarlayarak manuel sulama başlatabilir. Tarla seçildiğinde backend'den akıllı sulama tavsiyesi otomatik çekilir.
 
 <p align="center">
   <img src="ReadMeImages/manuel_yonetim.png" alt="Manuel Yönetim" width="85%" style="border-radius: 10px;"><br/>
-  <em>Manuel Yönetim — Tarla seçerek manuel sulama başlatma, süre ayarı ve sistem tavsiyesi</em>
+  <em>Manuel Yönetim Sayfası</em>
 </p>
+
+### 7. Sulama Planı
+Tarla bazlı haftalık sulama takvimi. Her slot için başlangıç-bitiş saati, su miktarı, süre ve not bilgisi. Bugünün planı otomatik vurgulanır.
 
 <p align="center">
   <img src="ReadMeImages/sulama_plani.png" alt="Sulama Planı" width="85%" style="border-radius: 10px;"><br/>
-  <em>Sulama Planı — Haftalık sulama takvimi, günlük su miktarı ve toplam süre istatistikleri</em>
+  <em>Sulama Planı Takvimi</em>
 </p>
+
+### 8. Sensörler
+Tüm sensör cihazlarının durumu, pil seviyesi, son veri zamanı ve anlık değerleri tablo formatında. Durum bazlı filtreleme ve sistem sağlık yüzdesi.
 
 <p align="center">
   <img src="ReadMeImages/sensorler_sayfasi.png" alt="Sensörler" width="85%" style="border-radius: 10px;"><br/>
-  <em>Sensörler — Tüm sensör cihazlarının durumu, pil seviyesi, son veri zamanı ve filtreleme</em>
+  <em>Sensörler Sayfası</em>
 </p>
 
-<p align="center">
-  <img src="ReadMeImages/chatbot1.png" alt="Chatbot Giriş" width="85%" style="border-radius: 10px;"><br/>
-  <em>AI Tarım Danışmanı — Tarla seçim ekranı</em>
-</p>
+### 9. AI Tarım Danışmanı (Chatbot)
+LLaMA 3.3 70B destekli chatbot, önce tarla seçtirir ardından 11 farklı veri kaynağını toplayarak kişiselleştirilmiş tarım danışmanlığı sunar.
 
 <p align="center">
-  <img src="ReadMeImages/chatbot2.png" alt="Chatbot Sohbet" width="85%" style="border-radius: 10px;"><br/>
-  <em>AI Tarım Danışmanı — Tarla verilerine dayalı kişiselleştirilmiş sohbet</em>
+  <img src="ReadMeImages/chatbot1.png" alt="Chatbot Tarla Seçimi" width="48%" style="border-radius: 10px; margin-right: 10px;">
+  <img src="ReadMeImages/chatbot2.png" alt="Chatbot Sohbet" width="48%" style="border-radius: 10px;">
+  <br/>
+  <em>Tarla Seçimi ve AI Sohbet Ekranı</em>
 </p>
 
 ---
