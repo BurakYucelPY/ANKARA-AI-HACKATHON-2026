@@ -520,6 +520,62 @@ Sistem arka planda saatte bir tüm tarlaları kontrol eder, ML tahmin doğrulama
 
 ---
 
+## 📊 Detaylı Dokümanlar (PDF)
+
+Projenin maliyet analizi, yatırım dönüşü ve iş modeli gibi detaylı verilerini içeren iki kapsamlı doküman hazırlanmıştır. Aşağıdan indirebilirsiniz:
+
+---
+
+### 1. 💰 Maliyet Tablosu ve Kâr Analizi
+
+<p align="center">
+  <a href="ReadMeImages/Ak%C4%B1ll%C4%B1%20Sulama%20Sistemi%20Maliyet%20Tablosu%20-%20Ak%C4%B1ll%C4%B1%20Sulama%20Sistemi%20Maliyet%20Tablosu.pdf">
+    <img src="https://img.shields.io/badge/📥%20İndir-Maliyet%20Tablosu%20(PDF)-2ecc71?style=for-the-badge" alt="Maliyet Tablosu PDF İndir" />
+  </a>
+</p>
+
+Sistemin gerçek parasal verilerine dayalı detaylı maliyet-kazanç analizi:
+
+- **Donanım ve Kurulum Maliyetleri**: Gateway, LoRa Sensörler, Hava İstasyonu, Solenoid Vanalar gibi ana bileşenlerin birim fiyatları listelenmiş. Toplam donanım maliyeti ~35.500 ₺, montaj/lojistik/garanti/lisans dahil KDV'li satış fiyatı **46.800 ₺**.
+
+- **Geleneksel vs. Akıllı Tarım Karşılaştırması (Domates Örneği)**:
+  - Geleneksel yöntem: Mazot, işçilik, su, enerji → toplam **240.000 ₺** operasyonel gider
+  - AquaSmart ile: Gereksiz ilaçlama trafiği azalışı, işçilik düşüşü, elektrik tasarrufu → **153.250 ₺**
+  - **Sonuç**: Çiftçinin cebinden çıkan para ciddi oranda azalır
+
+- **Yıllık Toplam Kazanç Tablosu**: Gübre, su/enerji, işçilik ve mazot kalemleri tek tek kıyaslanmış.
+  - Geleneksel çiftçinin yıllık gideri: **415.000 ₺**
+  - AquaSmart ile yıllık gider: **193.250 ₺**
+  - 📈 **Yıllık net kazanç farkı: ~121.750 ₺**
+
+---
+
+### 2. 📈 Görünmez Kâr — Yatırım Sunumu (Pitch Deck)
+
+<p align="center">
+  <a href="ReadMeImages/Ak%C4%B1ll%C4%B1_Sulama_G%C3%B6r%C3%BCnmez_K%C3%A2r_organized.pdf">
+    <img src="https://img.shields.io/badge/📥%20İndir-Görünmez%20Kâr%20Sunumu%20(PDF)-3498db?style=for-the-badge" alt="Görünmez Kâr PDF İndir" />
+  </a>
+</p>
+
+Projenin vizyonunu, teknolojisini, pazar analizini ve pilot proje sonuçlarını anlatan kapsamlı sunum:
+
+- **"Görünmeyen Maliyetler" (Buzdağı Metaforu)**: Çiftçiler sadece su faturasını görür ama asıl kayıp "göz kararı" sulama yüzünden boşa giden gübre ve verim kaybıdır. Yıllık **55.000 ₺ görünmez kayıp** ortaya konmuş.
+
+- **Teknik Çözüm ve Çalışma Mantığı**: Sistemin "Tarlanın Yeni Beyni" olduğu vurgulanıyor. LoRaWAN (10km menzil), Kapasitif Toprak Sensörleri, Yapay Zeka (Cloud Server) ve Mobil Uygulama altyapısı şemalarla anlatılmış. Statik zamanlayıcılar ile dinamik yapay zeka sistemi arasındaki fark (hava durumuna göre karar verme yeteneği) detaylandırılmış.
+
+- **Yatırım Dönüşü (ROI) Senaryoları**:
+  - 🌽 **Mısır Çiftçisi**: Yıllık 47.750 ₺ tasarruf → Sistem parasını **1.5 yılda** çıkarıyor
+  - 🍅 **Domates Çiftçisi**: Yıllık 124.250 ₺ tasarruf → Sistem parasını **6 ayda** çıkarıyor
+
+- **Konya Pilot Projesi Sonuçları**: Konya Ovası'nda 50 dönümlük arazide 6 ay süren deneme:
+  - 💧 **%30 Su Tasarrufu**
+  - 🌾 **%20 Verim Artışı**
+
+- **Pazar ve İş Modeli**: Hedef kitle endüstriyel tarım yapan (Mısır, Pamuk, Şeker Pancarı) orta/büyük işletmeler. Gelir modeli: Donanım satışı + Yıllık yazılım aboneliği.
+
+---
+
 <p align="center">
   Made with 💧 by
   <a href="https://github.com/BurakYucelPY">Burak Yücel</a> •
