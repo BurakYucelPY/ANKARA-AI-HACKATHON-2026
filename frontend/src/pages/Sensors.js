@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Card from '../components/Card';
 import { useAuth } from '../context/AuthContext';
 import { getSensors } from '../services/api';
+import LoadingScreen from '../components/LoadingScreen';
 import './Sensors.css';
 
 /**
@@ -85,12 +86,10 @@ const Sensors = () => {
     if (loading) {
         return (
             <div className="sensors-page">
-                <div className="page-header">
-                    <div className="page-header-content">
-                        <h1 className="page-title">📡 Sensörler</h1>
-                        <p className="page-subtitle">Yükleniyor...</p>
-                    </div>
-                </div>
+                <LoadingScreen
+                    title="Sensörler"
+                    subtitle="Sensör verileri yükleniyor..."
+                />
             </div>
         );
     }
@@ -100,7 +99,7 @@ const Sensors = () => {
             <div className="sensors-page">
                 <div className="page-header">
                     <div className="page-header-content">
-                        <h1 className="page-title">📡 Sensörler</h1>
+                        <h1 className="page-title">Sensörler</h1>
                         <p className="page-subtitle" style={{ color: '#e74c3c' }}>{error}</p>
                     </div>
                 </div>
@@ -112,12 +111,9 @@ const Sensors = () => {
         <div className="sensors-page">
             <div className="page-header">
                 <div className="page-header-content">
-                    <h1 className="page-title">📡 Sensörler</h1>
+                    <h1 className="page-title">Sensörler</h1>
                     <p className="page-subtitle">Sensör durumlarını ve sağlık bilgilerini izleyin</p>
                 </div>
-                <button className="btn btn-primary">
-                    <span>➕</span> Sensör Ekle
-                </button>
             </div>
 
             {/* Özet Kartları */}

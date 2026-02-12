@@ -4,6 +4,7 @@ import { getFields, checkAllFields, getCurrentWeather } from '../services/api';
 import { MOCK_IRRIGATION_PLANS } from './IrrigationPlan';
 import Card from '../components/Card';
 import './Dashboard.css';
+import LoadingScreen from '../components/LoadingScreen';
 
 const DAY_MAP = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
 
@@ -125,12 +126,10 @@ const Dashboard = () => {
     if (loading) {
         return (
             <div className="dashboard">
-                <div className="dashboard-header">
-                    <div className="dashboard-welcome">
-                        <h1>Yükleniyor... ⏳</h1>
-                        <p>Dashboard verileri hazırlanıyor</p>
-                    </div>
-                </div>
+                <LoadingScreen
+                    title="Dashboard"
+                    subtitle="Dashboard verileri hazırlanıyor..."
+                />
             </div>
         );
     }
@@ -140,7 +139,7 @@ const Dashboard = () => {
             {/* Header */}
             <div className="dashboard-header">
                 <div className="dashboard-welcome">
-                    <h1>Hoş Geldiniz, {user.full_name || user.email}! 👋</h1>
+                    <h1>Hoş Geldiniz, {user.full_name || user.email}!</h1>
                     <p>Akıllı sulama sisteminizin özet durumu
                         {weather && ` • ${weather.konum}: ${weather.sicaklik}°C ${weather.emoji || ''}`}
                     </p>
@@ -160,7 +159,6 @@ const Dashboard = () => {
                 <div className="profit-hero">
                     <div className="profit-hero-content">
                         <div className="profit-label">
-                            <span className="profit-icon">💰</span>
                             <span>Toplam Kar</span>
                         </div>
                         <div className="profit-amount">
@@ -168,7 +166,7 @@ const Dashboard = () => {
                             <span className="amount">{formatMoney(systemStats.totalProfit)}</span>
                         </div>
                         <p className="profit-subtitle">
-                            🌱 {systemStats.startDate} tarihinden beri • {systemStats.daysActive} gün aktif
+                            {systemStats.startDate} tarihinden beri • {systemStats.daysActive} gün aktif
                             {fieldsData.length > 0 && ` • ${fieldsData.length} tarla`}
                         </p>
                     </div>
@@ -177,7 +175,6 @@ const Dashboard = () => {
                 <div className="water-hero">
                     <div className="water-hero-content">
                         <div className="water-label">
-                            <span className="water-icon">💧</span>
                             <span>Kazanılan Su</span>
                         </div>
                         <div className="water-amount">
@@ -193,7 +190,6 @@ const Dashboard = () => {
                 {/* Aktif Sulama Durumu */}
                 <Card className={`irrigation-status-card ${activeIrrigation ? 'active' : 'inactive'}`}>
                     <div className="irrigation-status-header">
-                        <span className="irrigation-icon">{activeIrrigation ? '💧' : '⏸️'}</span>
                         <h3>Aktif Sulama</h3>
                     </div>
 
@@ -215,7 +211,6 @@ const Dashboard = () => {
                     ) : (
                         <div className="irrigation-inactive">
                             <p className="no-irrigation-text">Şu an aktif sulama gereksinimi yok</p>
-                            <span className="inactive-icon">🌾</span>
                         </div>
                     )}
                 </Card>
@@ -223,7 +218,6 @@ const Dashboard = () => {
                 {/* Sonraki Sulama */}
                 <Card className="next-irrigation-card">
                     <div className="irrigation-status-header">
-                        <span className="irrigation-icon">⏰</span>
                         <h3>Sonraki Sulama</h3>
                     </div>
                     <div className="next-irrigation-content">
@@ -240,8 +234,8 @@ const Dashboard = () => {
                                     <span className="next-time">{nextPlannedIrrigation.start}</span>
                                 </div>
                                 <div className="next-irrigation-details">
-                                    <span className="next-field">📍 {nextPlannedIrrigation.fieldName}</span>
-                                    <span className="next-duration">💧 {nextPlannedIrrigation.amount}L • {nextPlannedIrrigation.start}–{nextPlannedIrrigation.end}</span>
+                                    <span className="next-field">{nextPlannedIrrigation.fieldName}</span>
+                                    <span className="next-duration">{nextPlannedIrrigation.amount}L • {nextPlannedIrrigation.start}–{nextPlannedIrrigation.end}</span>
                                     <span className="next-note">{nextPlannedIrrigation.note}</span>
                                 </div>
                             </>
@@ -257,7 +251,6 @@ const Dashboard = () => {
             {/* Son Aktiviteler */}
             <Card className="activities-card">
                 <div className="card-header-custom">
-                    <span className="header-icon">📋</span>
                     <h3>Sulama Durumları</h3>
                 </div>
                 <ul className="activity-list">

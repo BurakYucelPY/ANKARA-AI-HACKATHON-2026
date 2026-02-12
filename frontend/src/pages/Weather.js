@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getFields, getCurrentWeather, getHourlyForecast } from '../services/api';
 import Card from '../components/Card';
+import LoadingScreen from '../components/LoadingScreen';
 import './Weather.css';
 
 const Weather = () => {
@@ -258,16 +259,10 @@ const Weather = () => {
     if (loading) {
         return (
             <div className="weather-page">
-                <div className="page-header">
-                    <div className="page-header-content">
-                        <h1 className="page-title">🌤️ Hava Durumu</h1>
-                        <p className="page-subtitle">Veriler yükleniyor...</p>
-                    </div>
-                </div>
-                <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--gray-400)' }}>
-                    <p style={{ fontSize: '2rem' }}>⏳</p>
-                    <p>Hava durumu verileri yükleniyor...</p>
-                </div>
+                <LoadingScreen
+                    title="Hava Durumu"
+                    subtitle="Hava durumu verileri yükleniyor..."
+                />
             </div>
         );
     }
@@ -276,7 +271,7 @@ const Weather = () => {
         <div className="weather-page">
             <div className="page-header">
                 <div className="page-header-content">
-                    <h1 className="page-title">🌤️ Hava Durumu</h1>
+                    <h1 className="page-title">Hava Durumu</h1>
                     <p className="page-subtitle">Tarlalarınızın bulunduğu konumlardaki hava durumu</p>
                 </div>
             </div>

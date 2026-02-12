@@ -31,9 +31,15 @@
 /* Control Grid */
 .control-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: var(--space-6);
     margin-bottom: var(--space-6);
+}
+
+.control-panel {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
 }
 
 /* Control Panel */
@@ -59,8 +65,8 @@
    ===================== */
 .field-selector {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-4);
 }
 
 .field-selector-item {
@@ -69,6 +75,7 @@
     flex-direction: column;
     gap: var(--space-2);
     padding: var(--space-4);
+    min-height: 120px;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-lg);
@@ -123,6 +130,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: var(--space-3);
 }
 
 .field-selector-name {

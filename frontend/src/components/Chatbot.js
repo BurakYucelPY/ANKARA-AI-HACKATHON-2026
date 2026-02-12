@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getChatbotFields, sendChatbotMessage } from '../services/api';
+import aiIcon from '../assets/icons/ai.png';
+import generativeIcon from '../assets/icons/generative.png';
 import './Chatbot.css';
 
 const Chatbot = () => {
@@ -136,147 +138,168 @@ const Chatbot = () => {
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         ) : (
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-            <path d="M12 2C6.48 2 2 6.04 2 11c0 2.76 1.36 5.22 3.5 6.84V22l3.23-1.78C9.78 20.4 10.87 20.5 12 20.5c5.52 0 10-4.04 10-9S17.52 2 12 2z" />
-            <circle cx="8" cy="11" r="1" fill="currentColor" />
-            <circle cx="12" cy="11" r="1" fill="currentColor" />
-            <circle cx="16" cy="11" r="1" fill="currentColor" />
-          </svg>
+          <img className="chatbot-fab-icon" src={aiIcon} alt="AI" />
         )}
       </button>
 
       {/* Chat Penceresi */}
       {isOpen && (
         <div className="chatbot-window">
-          {/* Header */}
-          <div className="chatbot-header">
-            {selectedField && (
-              <button className="chatbot-back-btn" onClick={handleBack} title="Tarla Seçimine Dön">
+          <div className="chatbot-glow-trace" aria-hidden="true">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="chatbotGlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="rgb(34, 211, 238)" />
+                  <stop offset="50%" stopColor="rgb(34, 197, 94)" />
+                  <stop offset="100%" stopColor="rgb(59, 130, 246)" />
+                </linearGradient>
+              </defs>
+              <rect
+                className="chatbot-glow-path"
+                x="0.5"
+                y="0.5"
+                width="99"
+                height="99"
+                rx="3"
+                ry="3"
+                pathLength="100"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
+          </div>
+          <div className="chatbot-window-inner">
+            {/* Header */}
+            <div className="chatbot-header">
+              {selectedField && (
+                <button className="chatbot-back-btn" onClick={handleBack} title="Tarla Seçimine Dön">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                </button>
+              )}
+              <div className="chatbot-header-info">
+                <span className="chatbot-header-title">Tarım Danışmanı</span>
+                {selectedField && (
+                  <span className="chatbot-header-field">
+                    {selectedField.plant_icon || '🌱'} {selectedField.name}
+                  </span>
+                )}
+              </div>
+              <button className="chatbot-close-btn" onClick={toggleChat}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="15 18 9 12 15 6" />
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
-            )}
-            <div className="chatbot-header-info">
-              <span className="chatbot-header-title">🌾 Tarım Danışmanı</span>
-              {selectedField && (
-                <span className="chatbot-header-field">
-                  {selectedField.plant_icon || '🌱'} {selectedField.name}
-                </span>
+            </div>
+
+            {/* Body */}
+            <div className="chatbot-body">
+              {!selectedField ? (
+                /* Tarla Seçim Ekranı */
+                <div className="chatbot-field-select">
+                  <div className="chatbot-welcome">
+                    <div className="chatbot-welcome-icon">
+                      <img src={generativeIcon} alt="Yapay zeka" />
+                    </div>
+                    <h3>Hoş Geldiniz!</h3>
+                    <p>Danışmanlık almak istediğiniz tarlayı seçin</p>
+                  </div>
+
+                  {fieldsLoading ? (
+                    <div className="chatbot-loading">
+                      <div className="chatbot-spinner" />
+                      <span>Tarlalar yükleniyor...</span>
+                    </div>
+                  ) : fields.length === 0 ? (
+                    <div className="chatbot-empty">
+                      <p>Henüz tarlanız bulunmuyor.</p>
+                      <p>Tarlalarım sayfasından tarla ekleyebilirsiniz.</p>
+                    </div>
+                  ) : (
+                    <div className="chatbot-field-list">
+                      {fields.map((field) => (
+                        <button
+                          key={field.id}
+                          className="chatbot-field-btn"
+                          onClick={() => handleFieldSelect(field)}
+                        >
+                          <span className="chatbot-field-icon">
+                            {field.plant_icon || '🌱'}
+                          </span>
+                          <div className="chatbot-field-info">
+                            <span className="chatbot-field-name">{field.name}</span>
+                            <span className="chatbot-field-detail">
+                              {field.plant_type_name || 'Bitki seçilmedi'} • {field.location}
+                            </span>
+                          </div>
+                          <svg className="chatbot-field-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polyline points="9 18 15 12 9 6" />
+                          </svg>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Mesaj Alanı */
+                <div className="chatbot-messages">
+                  {messages.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      className={`chatbot-msg ${msg.role === 'user' ? 'chatbot-msg-user' : 'chatbot-msg-bot'}`}
+                    >
+                      {msg.role === 'assistant' && (
+                        <div className="chatbot-msg-avatar">🌾</div>
+                      )}
+                      <div className="chatbot-msg-bubble">
+                        {renderMessage(msg.content)}
+                      </div>
+                    </div>
+                  ))}
+
+                  {loading && (
+                    <div className="chatbot-msg chatbot-msg-bot">
+                      <div className="chatbot-msg-avatar">🌾</div>
+                      <div className="chatbot-msg-bubble chatbot-typing">
+                        <span className="chatbot-dot" />
+                        <span className="chatbot-dot" />
+                        <span className="chatbot-dot" />
+                      </div>
+                    </div>
+                  )}
+
+                  <div ref={messagesEndRef} />
+                </div>
               )}
             </div>
-            <button className="chatbot-close-btn" onClick={toggleChat}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
 
-          {/* Body */}
-          <div className="chatbot-body">
-            {!selectedField ? (
-              /* Tarla Seçim Ekranı */
-              <div className="chatbot-field-select">
-                <div className="chatbot-welcome">
-                  <div className="chatbot-welcome-icon">🤖</div>
-                  <h3>Hoş Geldiniz!</h3>
-                  <p>Danışmanlık almak istediğiniz tarlayı seçin</p>
-                </div>
-
-                {fieldsLoading ? (
-                  <div className="chatbot-loading">
-                    <div className="chatbot-spinner" />
-                    <span>Tarlalar yükleniyor...</span>
-                  </div>
-                ) : fields.length === 0 ? (
-                  <div className="chatbot-empty">
-                    <p>Henüz tarlanız bulunmuyor.</p>
-                    <p>Tarlalarım sayfasından tarla ekleyebilirsiniz.</p>
-                  </div>
-                ) : (
-                  <div className="chatbot-field-list">
-                    {fields.map((field) => (
-                      <button
-                        key={field.id}
-                        className="chatbot-field-btn"
-                        onClick={() => handleFieldSelect(field)}
-                      >
-                        <span className="chatbot-field-icon">
-                          {field.plant_icon || '🌱'}
-                        </span>
-                        <div className="chatbot-field-info">
-                          <span className="chatbot-field-name">{field.name}</span>
-                          <span className="chatbot-field-detail">
-                            {field.plant_type_name || 'Bitki seçilmedi'} • {field.location}
-                          </span>
-                        </div>
-                        <svg className="chatbot-field-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <polyline points="9 18 15 12 9 6" />
-                        </svg>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
-              /* Mesaj Alanı */
-              <div className="chatbot-messages">
-                {messages.map((msg, idx) => (
-                  <div
-                    key={idx}
-                    className={`chatbot-msg ${msg.role === 'user' ? 'chatbot-msg-user' : 'chatbot-msg-bot'}`}
-                  >
-                    {msg.role === 'assistant' && (
-                      <div className="chatbot-msg-avatar">🌾</div>
-                    )}
-                    <div className="chatbot-msg-bubble">
-                      {renderMessage(msg.content)}
-                    </div>
-                  </div>
-                ))}
-
-                {loading && (
-                  <div className="chatbot-msg chatbot-msg-bot">
-                    <div className="chatbot-msg-avatar">🌾</div>
-                    <div className="chatbot-msg-bubble chatbot-typing">
-                      <span className="chatbot-dot" />
-                      <span className="chatbot-dot" />
-                      <span className="chatbot-dot" />
-                    </div>
-                  </div>
-                )}
-
-                <div ref={messagesEndRef} />
+            {/* Footer - Input Alanı (sadece tarla seçildiyse) */}
+            {selectedField && (
+              <div className="chatbot-footer">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  className="chatbot-input"
+                  placeholder="Sorunuzu yazın..."
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={loading}
+                />
+                <button
+                  className="chatbot-send-btn"
+                  onClick={handleSend}
+                  disabled={loading || !input.trim()}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  </svg>
+                </button>
               </div>
             )}
           </div>
-
-          {/* Footer - Input Alanı (sadece tarla seçildiyse) */}
-          {selectedField && (
-            <div className="chatbot-footer">
-              <input
-                ref={inputRef}
-                type="text"
-                className="chatbot-input"
-                placeholder="Sorunuzu yazın..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                disabled={loading}
-              />
-              <button
-                className="chatbot-send-btn"
-                onClick={handleSend}
-                disabled={loading || !input.trim()}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="22" y1="2" x2="11" y2="13" />
-                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                </svg>
-              </button>
-            </div>
-          )}
         </div>
       )}
     </>

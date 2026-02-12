@@ -9,20 +9,32 @@ import PlantLibrary from './pages/PlantLibrary';
 import ManualControl from './pages/ManualControl';
 import Sensors from './pages/Sensors';
 import Weather from './pages/Weather';
-import FieldDetail from './pages/FieldDetail';
 import IrrigationPlan from './pages/IrrigationPlan';
+import LoadingScreen from './components/LoadingScreen';
 import './App.css';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="app-loading">
+        <LoadingScreen title="Oturum" subtitle="Oturum bilgileri yükleniyor..." />
+      </div>
+    );
+  }
   if (!user) return <Navigate to="/login" replace />;
   return children;
 };
 
 function AppRoutes() {
   const { user, loading } = useAuth();
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="app-loading">
+        <LoadingScreen title="Oturum" subtitle="Oturum bilgileri yükleniyor..." />
+      </div>
+    );
+  }
 
   return (
     <Routes>
@@ -33,7 +45,6 @@ function AppRoutes() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/fields" element={<Fields />} />
-              <Route path="/fields/:fieldId" element={<FieldDetail />} />
               <Route path="/weather" element={<Weather />} />
               <Route path="/plants" element={<PlantLibrary />} />
               <Route path="/manual" element={<ManualControl />} />
