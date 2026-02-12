@@ -59,8 +59,8 @@ const Dashboard = () => {
     // Sistem istatistikleri (kısmen dummy — backend'de istatistik endpoint'i yok)
     const systemStats = {
         startDate: '15 Ocak 2026',
-        totalWaterSaved: 125000,
-        totalProfit: 12450,
+        totalWaterSaved: 14500,
+        totalProfit: 19987,
         daysActive: Math.floor((new Date() - new Date('2026-01-15')) / 86400000),
     };
 
